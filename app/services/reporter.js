@@ -13,6 +13,7 @@ const reporter = function (runner, options) {
     duration:   0,
     start:      moment().toISOString(),
     end:        null,
+    schedule:   options.reporterOptions.schedule,
     tests:      []
   };
 
@@ -55,9 +56,13 @@ const reporter = function (runner, options) {
 
         let text = '\n';
         text += 'Test Results\n';
-        text += `Start: ${moment(result.start).format(MOMENT_FORMAT)}\n`;
-        text += `End: ${result.end.format(MOMENT_FORMAT)}\n`;
-        text += `Duration: ${result.duration.format("d[d] h:mm:ss")}\n`;
+        text += '\n';
+        text += `Schedule:   ${result.schedule.name}\n`;
+        text += `Files:      ${result.schedule.files}\n`;
+        text += '\n';
+        text += `Start:      ${moment(result.start).format(MOMENT_FORMAT)}\n`;
+        text += `End:        ${result.end.format(MOMENT_FORMAT)}\n`;
+        text += `Duration:   ${result.duration.format("d[d] h:mm:ss")}\n`;
         text += '\n';
         text += `Passes:     ${result.passes}\n`;
         text += `Failures:   ${result.fails}\n`;
@@ -67,9 +72,9 @@ const reporter = function (runner, options) {
         result.tests.forEach(test => {
           if (test.error) {
             text += '\n\n';
-            text += `Test:  ${test.name}\n`;
-            text += `Msg:   ${test.error}\n`;
-            text += `Stack: ${test.stack}`;
+            text += `Test:    ${test.name}\n`;
+            text += `Msg:     ${test.error}\n`;
+            text += `Stack:   ${test.stack}`;
           }
         });
 

@@ -174,7 +174,7 @@ const Scheduler = function (testRunner) {
     return later.setInterval(()=> {
       scheduleStatus[name].prevRun = moment().toISOString();
       log.debug(`Running schedule '${name} at ${scheduleStatus[name].prevRun}'`);
-      testRunner.run(allSchedules[name].files);
+      testRunner.run(name, allSchedules[name].files);
       updateStatus(name);
     }, allSchedules[name]);
   };
