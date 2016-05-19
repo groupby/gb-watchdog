@@ -1,8 +1,12 @@
 {
   "name": "gb-watchdog",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Continuous integration testing framework. Report to slack and elasticsearch.",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/groupby/gb-watchdog.git"
+  },
   "engines": {
     "node": ">=6"
   },
@@ -51,7 +55,6 @@
     "mocha": "^2.4.5",
     "moment": "^2.13.0",
     "moment-duration-format": "^1.3.0",
-    "morgan": "^1.7.0",
     "node-slack": "0.0.7",
     "run-sequence": "^1.1.5",
     "schema-inspector": "^1.6.4"

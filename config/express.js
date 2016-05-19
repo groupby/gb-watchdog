@@ -1,4 +1,3 @@
-const morgan         = require('morgan');
 const compression    = require('compression');
 const bodyParser     = require('body-parser');
 const methodOverride = require('method-override');
@@ -7,6 +6,9 @@ const errorHandler   = require('errorhandler');
 const cors           = require('cors');
 const expressLogger  = require('express-bunyan-logger');
 const config         = require('./index');
+const PrettyStream   = require('bunyan-prettystream');
+const prettyStdOut   = new PrettyStream({mode: 'dev'});
+prettyStdOut.pipe(process.stdout);
 
 module.exports = function (app) {
   const env = app.get('env');
@@ -25,15 +27,29 @@ module.exports = function (app) {
   app.use(cookieParser());
   app.use(cors());
   app.use(expressLogger({
-    name: `${config.FRAMEWORK_NAME}-express`,
-    streams: [{
-      level: 'info',
-      stream: process.stdout
-    }]
+    name:     `${config.FRAMEWORK_NAME}-express`,
+    format:   ":status-code - :method :url - response-time: :response-time",
+    streams:  [
+      {
+        level:  'info',
+        stream: prettyStdOut
+      }
+    ],
+    excludes: ['*'],
+    levelFn:  (status, err, meta)=> {
+      if (meta["response-time"] > 30000) {
+        return "fatal";
+      } else if (meta["status-code"] >= 500) {
+        return "error";
+      } else if (meta["status-code"] >= 400) {
+        return "warn";
+      } else {
+        return "info";
+      }
+    }
   }));
 
   if ('development' === env || 'test' === env) {
-    // app.use(morgan('dev'));
     app.use(errorHandler()); // Error handler - has to be last
   }
 };
