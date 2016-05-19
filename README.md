@@ -20,7 +20,10 @@ npm install gb-watchdog
 ```javascript
 var Watchdog = require('gb-watchdog');
 var configuration = {
-    // Defaults to no API key
+    // API key is used to secure the service. 
+    // Defaults to no API key.
+    // If a key is defined here, you must add a header to all subsequent calls to the service 
+    // in the form: `api_key=XXX-XXX-XXX-XXX`
     apiKey: 'XXX-XXX-XXX-XXX',
     
     // Defaults to no elasticsearch integration, only in-memory
