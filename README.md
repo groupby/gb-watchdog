@@ -54,10 +54,12 @@ var watchdog = new Watchdog(configuration);
 watchdog.run();
 
 // Create schedule for mocha test file that already exist in the filesystam
-watchdog.services.scheduler.add('myScheduleName', 'run path/test.js every 4 minutes except Saturday,Sunday');
+watchdog.services.scheduler.add('myScheduleName',
+    'run path/test.js every 4 minutes except Saturday,Sunday');
 
 // Or REST command
-// curl -XPOST localhost:7000/schedules -d '{"name":"myScheduleName", "schedule":"run path/test.js every 4 minutes except Saturday,Sunday"}'
+// curl -XPOST localhost:7000/schedules \
+//     -d '{"name":"myScheduleName", "schedule":"run path/test.js every 4 minutes except Saturday,Sunday"}'
 ```
 
 Run this file using
