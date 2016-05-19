@@ -6,9 +6,9 @@ npm install gb-watchdog
 
 ## API
 
-- Status endpoint returns 200 if all sub services are available and monitoring is active
-- Schedules endpoint allows the addition and removal of schedules. Start/stop scheduler.
-- Test results endpoint returns results, supports ES query argument if connected to ES
+- `/status` endpoint returns 200 if all sub services are available and monitoring is active
+- `/schedules` endpoint allows the addition and removal of schedules. Start/stop scheduler.
+- `/results` endpoint returns results, supports ES query argument if connected to ES
 
 ## App
 
@@ -16,6 +16,9 @@ npm install gb-watchdog
 - Reporter records results to slack and elasticsearch 
 
 ## Use
+
+Create a file in your project directory called `index.js`
+And put something like the following in the file.
 
 ```javascript
 var Watchdog = require('gb-watchdog');
@@ -55,6 +58,12 @@ watchdog.services.scheduler.add('myScheduleName', 'run path/test.js every 4 minu
 
 // Or REST command
 // curl -XPOST localhost:7000/schedules -d '{"name":"myScheduleName", "schedule":"run path/test.js every 4 minutes except Saturday,Sunday"}'
+```
+
+Run this file using
+
+```bash
+  node index.js
 ```
 
 Wait until it has run. You can check the status of the scheduler to see if it has run yet, and when it will next run.
