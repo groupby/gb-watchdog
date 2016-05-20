@@ -78,7 +78,7 @@ const setConfig = config => {
   }
 
   // This just resets the initial config back to default without overwriting the root reference
-  _.forEach(currentConfig, (value, key)=>{
+  _.forEach(currentConfig, (value, key)=> {
     delete currentConfig[key];
 
     if (DEFAULT_CONFIG[key]) {

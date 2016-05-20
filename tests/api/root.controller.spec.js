@@ -25,7 +25,7 @@ describe('root api', ()=> {
       .set('Content-Type', 'application/json')
       .expect(200)
       .then((res)=> {
-        expect(res.body.testRunner).to.eql('Not yet run');
+        expect(res.body.testRunner).to.eql({});
         expect(res.body.scheduler.state).to.eql('stopped');
         expect(res.body.scheduler.schedules).to.eql({});
       })
@@ -54,7 +54,7 @@ describe('root api', ()=> {
         .set('Content-Type', 'application/json')
         .expect(200)
         .then((res)=> {
-          expect(res.body.testRunner.total).to.eql(3);
+          expect(res.body.testRunner.default.total).to.eql(3);
           expect(res.body.scheduler.state).to.eql('running');
           expect(moment(res.body.scheduler.schedules.default.prevRun).valueOf()).to.be.below(moment().valueOf());
         })
@@ -65,10 +65,10 @@ describe('root api', ()=> {
   });
 });
 
-describe('protected root api', ()=> {
+describe.skip('protected root api', ()=> {
   let watchdog = null;
 
-  beforeEach(done => {
+  beforeEach(function(done) {
     watchdog = new Watchdog({
       logLevel: 'debug',
       apiKey:   'somereallygoodapikey'

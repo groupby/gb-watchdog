@@ -19,7 +19,7 @@ describe('test-runner service', ()=> {
 
   // NOTE: For some reason this test fails when everything is run.
   // Likely some weird module caching issue caused by testing.
-  it.skip('should run tests', done => {
+  it('should run tests', done => {
     let passes    = 0;
     let fails     = 0;
     let end       = 0;
@@ -29,7 +29,11 @@ describe('test-runner service', ()=> {
 
     const complete = ()=> {
       options.reporterOptions.statusCallback({
-        end: 'done'
+        end:      'done',
+        schedule: {
+          name:  'default',
+          files: ['tests/fakeE2ETests/noopTest.js']
+        }
       });
       expect(passes).to.eql(1);
       expect(fails).to.eql(2);
@@ -38,12 +42,14 @@ describe('test-runner service', ()=> {
       expect(options.reporterOptions.history).to.eql(history);
 
       const status = testRunner.status();
-      expect(status.end).to.eql('done');
+      expect(status['default'].end).to.eql('done');
+      expect(status['default'].schedule.name).to.eql('default');
+      expect(status['default'].schedule.files).to.eql(['tests/fakeE2ETests/noopTest.js']);
       done();
     };
 
     const reporter = function (mochaRunner, mochaOptions) {
-      options    = mochaOptions;
+      options = mochaOptions;
 
       mochaRunner.on('pass', ()=> {
         passes++;
@@ -60,7 +66,7 @@ describe('test-runner service', ()=> {
     };
 
     const testRunner = new TestRunner(reporter, slack, history);
-    testRunner.run(['tests/fakeE2ETests/noopTest.js']);
+    testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
   });
 
   it('should abort tests', done => {
@@ -69,12 +75,18 @@ describe('test-runner service', ()=> {
     const history = 'fake history';
 
     const complete = ()=> {
-      options.reporterOptions.statusCallback({end: 'done'});
+      options.reporterOptions.statusCallback({
+        end:      'done',
+        schedule: {
+          name:  'default',
+          files: ['tests/fakeE2ETests/noopTest.js']
+        }
+      });
       done();
     };
 
     const reporter = function (mochaRunner, mochaOptions) {
-      options    = mochaOptions;
+      options = mochaOptions;
 
       mochaRunner.on('end', ()=> {
         complete();
@@ -84,7 +96,7 @@ describe('test-runner service', ()=> {
     };
 
     const testRunner = new TestRunner(reporter, slack, history);
-    testRunner.run(['tests/fakeE2ETests/noopTest.js']);
+    testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
     testRunner.abort();
   });
 });
