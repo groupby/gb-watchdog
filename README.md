@@ -17,6 +17,19 @@ npm install gb-watchdog
 
 ## Use
 
+The following will walk you through creating a project that uses the watchdog framework.
+
+###Step 1 - create a test runner folder.
+
+
+```bash
+mkdir my-watchdog
+cd my-watchdog
+npm init
+npm install -g mocha
+```
+
+
 Create a file in your project directory called `index.js`
 And put something like the following in the file.
 
@@ -55,12 +68,74 @@ watchdog.run();
 
 // Create schedule for mocha test file that already exist in the filesystam
 watchdog.services.scheduler.add('myScheduleName',
-  'run path/test.js every 4 minutes except Saturday,Sunday');
+  'run test-upload.js every 4 minutes except Saturday,Sunday');
 
 // Or REST command
 // curl -XPOST localhost:7000/schedules \
 //   -d '{"name":"myScheduleName", "schedule":"run path/test.js every 4 minutes except Saturday,Sunday"}'
 ```
+
+###Step 2 - Create a test
+
+Install a few dependencies.
+
+```bash
+npm install chai request-promise --save
+```
+
+And then create the file reference in index.js called `test-upload.js`
+
+```javascript
+const chai           = require('chai');
+const expect         = chai.expect;
+const rp             = require('request-promise');
+
+options =  {
+    uri: 'https://someservice.example.com/data/v1/upload',
+    method: 'POST',
+    json: true,
+    formData: {
+        config: `clientKey: XXX-XXX-XXX-XXX`
+    }
+}
+
+twoRecords = {
+    value: `{id: 1, title: 'record 1'}
+            {id: 2, title: 'record 2'}`,
+    options: { filename: 'data.json' }
+}
+
+describe('upload service', ()=> {
+
+    beforeEach(function(done){
+        options.formData.data = {
+            value: `{id: 1, action: 'delete'}
+                    {id: 2, action: 'delete'}`,
+            options: { filename: 'data.json' }
+        }
+        rp(options).then(function (parsedBody) {
+            expect(parsedBody.status.code).to.eql(200);
+            done()
+        }).catch(done);
+    })
+
+  it('upload 2 records', (done)=> {
+    options.formData.data = twoRecords
+
+    rp(options).then(function (parsedBody) {
+        expect(parsedBody.status.code).to.eql(200);
+        expect(parsedBody.status.additionalInfo.masterCount).to.eql(2);
+        expect(parsedBody.status.additionalInfo.invalidRecordCount).to.eql(0);
+        done()
+    }).catch(done);
+
+  });
+}
+```
+
+
+
+###Step 3 - Run the tests
 
 Run this file using
 
