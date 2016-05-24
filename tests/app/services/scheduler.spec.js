@@ -338,14 +338,6 @@ describe('scheduler service', ()=> {
     scheduler.start();
   });
 
-  it('should NOT stop a scheduler that is not running', ()=> {
-    const throws = ()=> {
-      scheduler.stop();
-    };
-
-    expect(throws).to.throw(/Scheduler is already stopped/);
-  });
-
   it('should stop the scheduler', () => {
     const schedule = {
       schedules: [
