@@ -169,6 +169,10 @@ var testRunnerStatus = watchdog.services.testRunner.status();
     fails:      1,
     incomplete: 5,
     total:      16,
+    schedule:   {
+        name:   'someSchedule',
+        files:  ['testFile.js']
+    },
     tests: [
         {
             name:       'should be first test',
@@ -219,6 +223,10 @@ var results = watchdog.services.history.getResults(esQuery);
         fails:      1,
         incomplete: 5,
         total:      11,
+        schedule:   {
+            name:   'someSchedule',
+            files:  ['testFile.js']
+        },
         tests: [
             {
                 name:       'should be first test',
@@ -241,6 +249,10 @@ var results = watchdog.services.history.getResults(esQuery);
         fails:      10,
         incomplete: 0,
         total:      15,
+        schedule:   {
+            name:   'someSchedule',
+            files:  ['testFile.js']
+        },
         tests: [
             {
                 name:       'should be first test',
