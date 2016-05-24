@@ -229,15 +229,6 @@ describe('schedules api', ()=> {
           .expect(200)
           .then((res)=> {
             expect(res.body).to.eql({message: 'stopped'});
-          });
-      })
-      .then(()=> {
-        expect(watchdog.services.scheduler.status().state).to.eql('stopped');
-        return request(watchdog).post('/schedules/_stop')
-          .set('Content-Type', 'application/json')
-          .expect(400)
-          .then((res)=> {
-            expect(res.body).to.eql({error: 'Scheduler is already stopped'});
             done();
           });
       });

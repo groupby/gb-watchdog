@@ -1,48 +1,58 @@
-const _      = require('lodash');
-const config = require('../../config');
+const _       = require('lodash');
+const config  = require('../../config');
 const decache = require('decache');
 
 const TestRunner = function (reporter, slack, history) {
   const log       = config.log;
   const self      = this;
-  let mochaRunner = null;
-  let curStatus   = 'Not yet run';
+  let mochaRunner = {};
+  let curStatus   = {};
 
   const statusCallback = (update) => {
-    curStatus = update;
+    curStatus[update.schedule.name] = update;
 
-    log.info('Status update: ', JSON.stringify(update, null, 2));
+    log.info(`Status update for ${update.schedule.name}: `, JSON.stringify(update, null, 2));
 
     // If the previous run is complete, remove reference to mochaRunner
-    if (curStatus.end !== null) {
-      mochaRunner = null;
+    if (update.end !== null) {
+      delete mochaRunner[update.schedule.name]
     }
   };
 
-  self.run = (files) => {
-    log.info('Running test with files: ', JSON.stringify(files, null, 2));
+  self.run = (name, files) => {
+    if (!mochaRunner[name]) {
+      log.info(`Running schedule '${name}' with files: ${files}`);
 
-    // Need to clear it out of the module cache because mocha keeps a global variable tracking test state
-    decache('mocha');
-    const Mocha     = require('mocha');
-    const mocha = new Mocha();
-    mocha.reporter(reporter, {
-      username:       (config.slack) ? config.slack.username : null,
-      channel:        (config.slack) ? config.slack.channel : null,
-      slack:          slack,
-      statusCallback: statusCallback,
-      history:        history
-    });
+      // Need to clear it out of the module cache because mocha keeps a global variable tracking test state
+      decache('mocha');
+      const Mocha = require('mocha');
+      const mocha = new Mocha();
+      mocha.reporter(reporter, {
+        schedule:       {
+          name:  name,
+          files: files
+        },
+        username:       (config.slack) ? config.slack.username : null,
+        channel:        (config.slack) ? config.slack.channel : null,
+        slack:          slack,
+        statusCallback: statusCallback,
+        history:        history
+      });
 
-    _.forEach(files, file => mocha.addFile(file));
-    mochaRunner = mocha.run();
+      _.forEach(files, file => mocha.addFile(file));
+      mochaRunner[name] = mocha.run();
+    } else {
+      log.warn(`Already running test for schedule '${name}, skipping this run'`);
+    }
   };
 
-  self.abort = ()=> {
-    if (mochaRunner === null) {
-      log.error('Cannot abort testing, tests not running');
+  self.abort = (name)=> {
+    if (!mochaRunner[name]) {
+      log.error(`Cannot abort testing of '${name}', tests not running`);
     } else {
-      mochaRunner.abort();
+      log.info(`Aborted testing for '${name}'`);
+      mochaRunner[name].abort();
+      delete mochaRunner[name];
     }
   };
 

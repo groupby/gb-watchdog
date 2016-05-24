@@ -18,6 +18,10 @@ describe('result model', ()=> {
       fails:        2,
       incomplete:   0,
       total:        3,
+      schedule:   {
+        name:  'default',
+        files: ['sometest.js']
+      },
       tests:        [
         {
           name:     'first',
@@ -46,6 +50,10 @@ describe('result model', ()=> {
       fails:      2,
       incomplete: 0,
       total:      3,
+      schedule:   {
+        name:  'default',
+        files: ['sometest.js']
+      },
       tests:      [
         {
           name:     'first',

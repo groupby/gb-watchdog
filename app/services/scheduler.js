@@ -4,7 +4,9 @@ const moment   = require('moment');
 const Schedule = require('../models/schedule');
 const config   = require('../../config');
 
-const MSEC_IN_SEC = 1000;
+const MSEC_IN_SEC    = 1000;
+const STATUS_STOPPED = 'stopped';
+const STATUS_RUNNING = 'running';
 
 const Scheduler = function (testRunner) {
   const log  = config.log;
@@ -18,8 +20,6 @@ const Scheduler = function (testRunner) {
   let scheduleStatus   = {};
   let runningIntervals = {};
   let running          = false;
-  const STATUS_STOPPED = 'stopped';
-  const STATUS_RUNNING = 'running';
 
   self.add = (name, schedule) => {
     if (!_.isString(name) || !Scheduler.NAME_REGEX.test(name)) {
@@ -136,20 +136,17 @@ const Scheduler = function (testRunner) {
   };
 
   self.stop = () => {
-    if (!running) {
-      throw new Error('Scheduler is already stopped');
-    } else {
-      log.info('Stopping scheduler ..');
-      clearAllIntervals();
-      running = false;
-      log.info('Stopped');
-    }
+    log.info('Stopping scheduler ..');
+    clearAllIntervals();
+    running = false;
+    log.info('Stopped');
   };
 
   const clearAllIntervals = () => {
     log.debug(`Clearing all ${_.size(runningIntervals)} intervals`);
     _.map(runningIntervals, (interval, name) => {
       log.debug(`stopping ${name}`);
+      testRunner.abort(name);
       scheduleStatus[name].nextRun = STATUS_STOPPED;
       interval.clear();
     });
@@ -174,7 +171,7 @@ const Scheduler = function (testRunner) {
     return later.setInterval(()=> {
       scheduleStatus[name].prevRun = moment().toISOString();
       log.debug(`Running schedule '${name} at ${scheduleStatus[name].prevRun}'`);
-      testRunner.run(allSchedules[name].files);
+      testRunner.run(name, allSchedules[name].files);
       updateStatus(name);
     }, allSchedules[name]);
   };

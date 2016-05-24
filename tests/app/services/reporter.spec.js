@@ -28,7 +28,11 @@ describe('reporter service', ()=> {
       reporterOptions: {
         slack:    mockSlack,
         channel:  'test_channel',
-        username: 'test_user'
+        username: 'test_user',
+        schedule:   {
+          name:  'default',
+          files: ['sometest.js']
+        }
       }
     };
 
@@ -85,7 +89,11 @@ describe('reporter service', ()=> {
 
     const options = {
       reporterOptions: {
-        statusCallback: statusCallback
+        statusCallback: statusCallback,
+        schedule:   {
+          name:  'default',
+          files: ['sometest.js']
+        }
       }
     };
 
@@ -107,6 +115,7 @@ describe('reporter service', ()=> {
     expect(statusSent.duration).to.eql(0);
     expect(statusSent.start).to.be.defined;
     expect(statusSent.end).to.be.null;
+    expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
     expect(statusSent.tests.length).to.eql(1);
     expect(statusSent.tests[0]).to.eql({
       name:     'test title',
@@ -123,6 +132,7 @@ describe('reporter service', ()=> {
     expect(statusSent.duration).to.eql(0);
     expect(statusSent.start).to.be.defined;
     expect(statusSent.end).to.be.null;
+    expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
     expect(statusSent.tests.length).to.eql(2);
     expect(statusSent.tests[1]).to.eql({
       name:     'test title 2',
@@ -139,6 +149,7 @@ describe('reporter service', ()=> {
     expect(statusSent.duration).to.eql(0);
     expect(statusSent.start).to.be.defined;
     expect(statusSent.end).to.be.null;
+    expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
     expect(statusSent.tests.length).to.eql(3);
     expect(statusSent.tests[2]).to.eql({
       name:     'test title 3',
@@ -160,6 +171,7 @@ describe('reporter service', ()=> {
     expect(statusSent.duration).to.eql(0);
     expect(statusSent.start).to.be.defined;
     expect(statusSent.end).to.be.null;
+    expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
     expect(statusSent.tests.length).to.eql(4);
     expect(statusSent.tests[3]).to.eql({
       name:     'test title 4',
@@ -177,6 +189,7 @@ describe('reporter service', ()=> {
       expect(statusSent.duration).to.not.eql(0);
       expect(statusSent.start).to.be.defined;
       expect(statusSent.end).to.be.defined;
+      expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
       expect(statusSent.tests.length).to.eql(4);
       done();
     }, 5);
@@ -200,7 +213,11 @@ describe('reporter service', ()=> {
 
     const options = {
       reporterOptions: {
-        history: mockHistory
+        history: mockHistory,
+        schedule:   {
+          name:  'default',
+          files: ['sometest.js']
+        }
       }
     };
 
@@ -241,6 +258,7 @@ describe('reporter service', ()=> {
       expect(historySent.duration).to.not.eql(0);
       expect(historySent.start).to.be.defined;
       expect(historySent.end).to.be.defined;
+      expect(historySent.schedule).to.eql(options.reporterOptions.schedule);
       expect(historySent.tests.length).to.eql(4);
       done();
     }, 5);

@@ -21,7 +21,8 @@ describe('scheduler service', ()=> {
 
   beforeEach(()=> {
     testRunnerMock = {
-      run: (arg) => {}
+      run:   (arg) => {},
+      abort: ()=> {}
     };
     scheduler      = new Scheduler(testRunnerMock);
   });
@@ -129,7 +130,7 @@ describe('scheduler service', ()=> {
     let schedule = new Schedule('run tests/fakeE2ETests/fakeTest.js every 2 hours');
     scheduler.add('default', schedule);
 
-    let status  = scheduler.status();
+    let status = scheduler.status();
     expect(status.schedules.default.prevRun).to.eql('never');
     expect(moment(status.schedules.default.nextRun).valueOf()).to.be.above(moment().valueOf());
     const twoMinuteNextRun = moment(status.schedules.default.nextRun);
@@ -313,12 +314,12 @@ describe('scheduler service', ()=> {
   });
 
   it('should start the scheduler', done => {
-    testRunnerMock.run = (arg) => {
+    testRunnerMock.run = (name, files) => {
       expect(scheduler.status().state).to.eql('running');
       expect(scheduler.status().schedules.default.prevRun).to.not.eql('none');
-      expect(arg).to.eql(schedule.files);
+      expect(name).to.eql('default');
+      expect(files).to.eql(schedule.files);
       scheduler.stop();
-      log.info('calling done');
       done();
     };
 
@@ -335,14 +336,6 @@ describe('scheduler service', ()=> {
     expect(scheduler.status().state).to.eql('stopped');
     expect(scheduler.status().schedules.default.prevRun).to.eql('never');
     scheduler.start();
-  });
-
-  it('should NOT stop a scheduler that is not running', ()=> {
-    const throws = ()=> {
-      scheduler.stop();
-    };
-
-    expect(throws).to.throw(/Scheduler is already stopped/);
   });
 
   it('should stop the scheduler', () => {

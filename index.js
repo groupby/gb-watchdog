@@ -1,16 +1,16 @@
 const express = require('express');
-const config  = require('./config');
+const config = require('./config');
 
-const createServer = function(configuration) {
+const createServer = function (configuration) {
   config.setConfig(configuration);
 
-  const log     = config.log;
+  const log    = config.log;
   const app    = express();
   const server = require('http').createServer(app);
   require('./config/express')(app);
   require('./app/routes')(app);
 
-  app.config = config;
+  app.config   = config;
   app.services = require('./app/services');
 
   app.run = () => {
@@ -22,6 +22,7 @@ const createServer = function(configuration) {
   };
 
   app.stop = () => {
+    app.services.scheduler.stop();
     server.close();
   };
 

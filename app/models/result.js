@@ -36,6 +36,20 @@ const SCHEMA = {
       type: 'integer',
       gte:  0
     },
+    schedule: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string'
+        },
+        files: {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
+        }
+      }
+    },
     tests:    {
       type:  'array',
       items: {

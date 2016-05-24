@@ -107,6 +107,18 @@ const WATCHDOG_INDEX_TEMPLATE = {
         total:      {
           type: 'integer'
         },
+        schedule: {
+          properties: {
+            name: {
+              type:  'string',
+              index: 'not_analyzed'
+            },
+            files: {
+              type:  'string',
+              index: 'not_analyzed'
+            }
+          }
+        },
         tests:      {
           properties: {
             name:     {
