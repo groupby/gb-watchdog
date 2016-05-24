@@ -6,9 +6,9 @@ npm install gb-watchdog
 
 ## API
 
-- Status endpoint returns 200 if all sub services are available and monitoring is active
-- Schedules endpoint allows the addition and removal of schedules. Start/stop scheduler.
-- Test results endpoint returns results, supports ES query argument if connected to ES
+- `/status` endpoint returns 200 if all sub services are available and monitoring is active
+- `/schedules` endpoint allows the addition and removal of schedules. Start/stop scheduler.
+- `/results` endpoint returns results, supports ES query argument if connected to ES
 
 ## App
 
@@ -17,10 +17,29 @@ npm install gb-watchdog
 
 ## Use
 
+The following will walk you through creating a project that uses the watchdog framework.
+
+###Step 1 - create a test runner folder.
+
+
+```bash
+mkdir my-watchdog
+cd my-watchdog
+npm init
+npm install -g mocha
+```
+
+
+Create a file in your project directory called `index.js`
+And put something like the following in the file.
+
 ```javascript
 var Watchdog = require('gb-watchdog');
 var configuration = {
-    // Defaults to no API key
+    // API key is used to secure the service. 
+    // Defaults to no API key.
+    // If a key is defined here, you must add a header to all subsequent calls to the service 
+    // in the form: `api_key=XXX-XXX-XXX-XXX`
     apiKey: 'XXX-XXX-XXX-XXX',
     
     // Defaults to no elasticsearch integration, only in-memory
@@ -48,10 +67,80 @@ var watchdog = new Watchdog(configuration);
 watchdog.run();
 
 // Create schedule for mocha test file that already exist in the filesystam
-watchdog.services.scheduler.add('myScheduleName', 'run path/test.js every 4 minutes except Saturday,Sunday');
+watchdog.services.scheduler.add('myScheduleName',
+  'run test-upload.js every 4 minutes except Saturday,Sunday');
 
 // Or REST command
-// curl -XPOST localhost:7000/schedules -d '{"name":"myScheduleName", "schedule":"run path/test.js every 4 minutes except Saturday,Sunday"}'
+// curl -XPOST localhost:7000/schedules \
+//   -d '{"name":"myScheduleName", "schedule":"run path/test.js every 4 minutes except Saturday,Sunday"}'
+```
+
+###Step 2 - Create a test
+
+Install a few dependencies.
+
+```bash
+npm install chai request-promise --save
+```
+
+And then create the file reference in index.js called `test-upload.js`
+
+```javascript
+const chai           = require('chai');
+const expect         = chai.expect;
+const rp             = require('request-promise');
+
+options =  {
+    uri: 'https://someservice.example.com/data/v1/upload',
+    method: 'POST',
+    json: true,
+    formData: {
+        config: `clientKey: XXX-XXX-XXX-XXX`
+    }
+}
+
+twoRecords = {
+    value: `{id: 1, title: 'record 1'}
+            {id: 2, title: 'record 2'}`,
+    options: { filename: 'data.json' }
+}
+
+describe('upload service', ()=> {
+
+    beforeEach(function(done){
+        options.formData.data = {
+            value: `{id: 1, action: 'delete'}
+                    {id: 2, action: 'delete'}`,
+            options: { filename: 'data.json' }
+        }
+        rp(options).then(function (parsedBody) {
+            expect(parsedBody.status.code).to.eql(200);
+            done()
+        }).catch(done);
+    })
+
+  it('upload 2 records', (done)=> {
+    options.formData.data = twoRecords
+
+    rp(options).then(function (parsedBody) {
+        expect(parsedBody.status.code).to.eql(200);
+        expect(parsedBody.status.additionalInfo.masterCount).to.eql(2);
+        expect(parsedBody.status.additionalInfo.invalidRecordCount).to.eql(0);
+        done()
+    }).catch(done);
+
+  });
+}
+```
+
+
+
+###Step 3 - Run the tests
+
+Run this file using
+
+```bash
+  node index.js
 ```
 
 Wait until it has run. You can check the status of the scheduler to see if it has run yet, and when it will next run.
