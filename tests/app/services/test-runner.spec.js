@@ -45,6 +45,7 @@ describe('test-runner service', ()=> {
       expect(status['default'].end).to.eql('done');
       expect(status['default'].schedule.name).to.eql('default');
       expect(status['default'].schedule.files).to.eql(['tests/fakeE2ETests/noopTest.js']);
+      testRunner.abort();
       done();
     };
 

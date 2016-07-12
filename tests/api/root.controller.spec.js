@@ -68,7 +68,7 @@ describe('root api', ()=> {
 describe.skip('protected root api', ()=> {
   let watchdog = null;
 
-  beforeEach(function(done) {
+  beforeEach((done) => {
     watchdog = new Watchdog({
       logLevel: 'debug',
       apiKey:   'somereallygoodapikey'

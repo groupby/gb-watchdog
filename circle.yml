@@ -1,0 +1,16 @@
+machine:
+  node:
+    version: 6.3.0
+dependencies:
+  pre:
+    - sudo service elasticsearch stop
+  override:
+    - npm install
+  post:
+    - docker run -d --name es -p 9200:9200 elasticsearch:2.3
+    - echo 'waiting for databases to start ....'
+    - sleep 40
+    - npm install --global gulp-cli
+test:
+  override:
+    - gulp coveralls

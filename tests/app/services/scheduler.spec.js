@@ -14,7 +14,7 @@ chai.use(chaiAsPromised);
 
 describe('scheduler service', ()=> {
   config.setConfig({logLevel: 'debug'});
-  const log = config.log;
+  // const log = config.log;
 
   let scheduler      = null;
   let testRunnerMock = null;
