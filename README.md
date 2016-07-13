@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/groupby/gb-watchdog/badge.svg?branch=master)](https://coveralls.io/github/groupby/gb-watchdog?branch=master) [![CircleCI](https://circleci.com/gh/groupby/gb-watchdog.svg?style=svg)](https://circleci.com/gh/groupby/gb-watchdog)
+
 ## Installation
 
 ```
