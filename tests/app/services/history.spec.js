@@ -1,3 +1,4 @@
+/*eslint no-invalid-this: "off"*/
 const chai           = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const expect         = chai.expect;
