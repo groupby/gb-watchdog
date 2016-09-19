@@ -4,6 +4,8 @@ const Result        = require('../models/result');
 const elasticsearch = require('../../config/elasticsearch');
 const config        = require('../../config');
 
+const MAX_LOCAL_HISTORY = 10000;
+
 const History = function (host) {
   const self = this;
   const log  = config.log;
@@ -48,6 +50,11 @@ const History = function (host) {
       return addEsResult(result);
     } else {
       localHistory.push(result);
+
+      while (localHistory.length > MAX_LOCAL_HISTORY) {
+        localHistory.shift();
+      }
+
       return Promise.resolve();
     }
   };

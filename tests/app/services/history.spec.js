@@ -3,6 +3,7 @@ const chaiAsPromised = require('chai-as-promised');
 const expect         = chai.expect;
 const moment         = require('moment');
 const elasticsearch  = require('../../../config/elasticsearch');
+const _ = require('lodash');
 
 const config  = require('../../../config');
 const History = require('../../../app/services/history');
@@ -80,6 +81,41 @@ describe('history service', ()=> {
       expect(response.status).to.eql(404);
       done();
     }).catch(done);
+  });
+
+  it('should cap local history to last 10,000 events', function(done) {
+    this.timeout(5000);
+
+    const history = new History();
+
+    const result = {
+      start:      moment().toISOString(),
+      end:        moment().add(1, 'hour').toISOString(),
+      duration:   10,
+      passes:     1,
+      fails:      2,
+      incomplete: 0,
+      total:      3,
+      schedule:   {
+        name:  'default',
+        files: ['sometest.js']
+      },
+      tests:      [
+        {
+          name:     'first',
+          duration: 10
+        }
+      ]
+    };
+
+    _.times(15000, () => {
+      history.addResult(result);
+    });
+
+    history.getResults().then((results) => {
+      expect(results.length).to.eql(10000);
+      done();
+    });
   });
 
   it('should clear results from local', done => {
