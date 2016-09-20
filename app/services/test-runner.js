@@ -11,7 +11,11 @@ const TestRunner = function (reporter, slack, history) {
   const statusCallback = (update) => {
     curStatus[update.schedule.name] = update;
 
-    log.info(`Status update for ${update.schedule.name}: `, JSON.stringify(update, null, 2));
+    if (update.fails > 0) {
+      log.error(`Failed test: ${update.schedule.name} \n with results: ${JSON.stringify(update, null, 2)}`);
+    } else {
+      log.debug(`Status update for ${update.schedule.name}: `, JSON.stringify(update, null, 2));
+    }
 
     // If the previous run is complete, remove reference to mochaRunner
     if (update.end !== null) {
@@ -21,7 +25,7 @@ const TestRunner = function (reporter, slack, history) {
 
   self.run = (name, files) => {
     if (!mochaRunner[name]) {
-      log.info(`Running schedule '${name}' with files: ${files}`);
+      log.debug(`Running schedule '${name}' with files: ${files}`);
 
       // Need to clear it out of the module cache because mocha keeps a global variable tracking test state
       decache('mocha');
