@@ -32,6 +32,21 @@ const SCHEMA = {
         }
       }
     },
+    blipServer:    {
+      optional:   true,
+      type:       'object',
+      properties: {
+        host: {
+          type:      'string',
+          minLength: 1
+        },
+        port: {
+          type: 'integer',
+          gt:   0,
+          lte:  65535
+        },
+      }
+    },
     slack:         {
       optional:   true,
       type:       'object',
