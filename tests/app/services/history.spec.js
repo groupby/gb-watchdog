@@ -40,7 +40,7 @@ describe('history service', ()=> {
     });
   });
 
-  it('should add results to local', done => {
+  it('should add results to local', (done) => {
     const history = new History();
 
     const result = {
@@ -66,7 +66,7 @@ describe('history service', ()=> {
     history.addResult(result).then(()=> {
       return client.indices.refresh();
     }).then(()=> {
-      return history.getResults().then(results => {
+      return history.getResults().then((results) => {
         expect(results.length).to.eql(1);
         expect(results[0]).to.eql(result);
       });
@@ -76,7 +76,7 @@ describe('history service', ()=> {
         q:      '*',
         ignore: 404
       });
-    }).then(response => {
+    }).then((response) => {
       expect(response.status).to.eql(404);
       done();
     }).catch(done);
@@ -117,7 +117,7 @@ describe('history service', ()=> {
     });
   });
 
-  it('should clear results from local', done => {
+  it('should clear results from local', (done) => {
     const history = new History();
 
     const result = {
@@ -141,21 +141,21 @@ describe('history service', ()=> {
     };
 
     history.addResult(result).then(()=> {
-      return history.getResults().then(results => {
+      return history.getResults().then((results) => {
         expect(results.length).to.eql(1);
         expect(results[0]).to.eql(result);
       });
     }).then(()=> {
       return history.clearResults();
     }).then(()=> {
-      return history.getResults().then(results => {
+      return history.getResults().then((results) => {
         expect(results.length).to.eql(0);
         done();
       });
     }).catch(done);
   });
 
-  it('should add results to elasticsearch', done => {
+  it('should add results to elasticsearch', (done) => {
     const history = new History(client, 'testing');
 
     const result = {
@@ -181,7 +181,7 @@ describe('history service', ()=> {
     history.addResult(result).then(()=> {
       return client.indices.refresh();
     }).then(()=> {
-      return history.getResults().then(results => {
+      return history.getResults().then((results) => {
         expect(results.length).to.eql(1);
         expect(results[0]).to.eql(result);
       })
@@ -190,14 +190,14 @@ describe('history service', ()=> {
         index: INDEX,
         q:     '*'
       });
-    }).then(response => {
+    }).then((response) => {
       expect(response.hits.hits.length).to.eql(1);
       expect(response.hits.hits[0]._source).to.eql(result);
       done();
     }).catch(done);
   });
 
-  it('should clear results from elasticsearch', done => {
+  it('should clear results from elasticsearch', (done) => {
     const history = new History(client, 'testing');
 
     const result = {
@@ -223,14 +223,14 @@ describe('history service', ()=> {
     history.addResult(result).then(()=> {
       return client.indices.refresh();
     }).then(()=> {
-      return history.getResults().then(results => {
+      return history.getResults().then((results) => {
         expect(results.length).to.eql(1);
         expect(results[0]).to.eql(result);
       })
     }).then(()=> {
       return history.clearResults();
     }).then(()=> {
-      return history.getResults().then(results => {
+      return history.getResults().then((results) => {
         expect(results.length).to.eql(0);
         done();
       });

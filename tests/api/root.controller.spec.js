@@ -11,7 +11,7 @@ chai.use(chaiAsPromised);
 describe('root api', ()=> {
   let watchdog = null;
 
-  beforeEach(done => {
+  beforeEach((done) => {
     watchdog = new Watchdog({logLevel: 'debug'});
     watchdog.services.scheduler.deleteAll();
     watchdog.services.history.clearResults()
@@ -20,7 +20,7 @@ describe('root api', ()=> {
       });
   });
 
-  it('should return status of services', done => {
+  it('should return status of services', (done) => {
     request(watchdog).get('/status')
       .set('Content-Type', 'application/json')
       .expect(200)
@@ -34,7 +34,7 @@ describe('root api', ()=> {
       }).catch(done);
   });
 
-  it('should return status of scheduled services', done => {
+  it('should return status of scheduled services', (done) => {
     watchdog.services.scheduler.start();
 
     const schedule = {
@@ -80,7 +80,7 @@ describe('protected root api', ()=> {
       });
   });
 
-  it('should return status of services when providing api key', done => {
+  it('should return status of services when providing api key', (done) => {
     request(watchdog).get('/status')
       .set('Content-Type', 'application/json')
       .set('api_key', 'somereallygoodapikey')
@@ -90,7 +90,7 @@ describe('protected root api', ()=> {
       }).catch(done);
   });
 
-  it('should NOT return status of services when NOT providing api key', done => {
+  it('should NOT return status of services when NOT providing api key', (done) => {
     request(watchdog).get('/status')
       .set('Content-Type', 'application/json')
       .expect(400)
@@ -99,7 +99,7 @@ describe('protected root api', ()=> {
       }).catch(done);
   });
 
-  it('should NOT return status of services when providing incorrect api key', done => {
+  it('should NOT return status of services when providing incorrect api key', (done) => {
     request(watchdog).get('/status')
       .set('Content-Type', 'application/json')
       .set('api_key', 'incorrectkey')

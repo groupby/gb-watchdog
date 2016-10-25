@@ -6,10 +6,10 @@ module.exports = function(services) {
 
   self.getResults = (req, res)=> {
     services.history.getResults(req.body)
-      .then(results => {
+      .then((results) => {
         res.status(200).json(results);
       })
-      .catch(error => {
+      .catch((error) => {
         utils.processError(error, res);
       });
   };

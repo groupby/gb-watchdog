@@ -10,7 +10,7 @@ chai.use(chaiAsPromised);
 describe('reporter service', ()=> {
 
 
-  it('should update status via callback', done => {
+  it('should update status via callback', (done) => {
     const eventCallbacks = {};
     const mockRunner     = {
       total: 10,

@@ -313,7 +313,7 @@ describe('scheduler service', ()=> {
     expect(throws).to.throw(/name must be string of 1-40 alphanumeric characters/);
   });
 
-  it('should start the scheduler', done => {
+  it('should start the scheduler', (done) => {
     testRunnerMock.run = (name, files) => {
       expect(scheduler.status().state).to.eql('running');
       expect(scheduler.status().schedules.default.prevRun).to.not.eql('none');

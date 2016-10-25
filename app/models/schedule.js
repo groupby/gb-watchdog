@@ -99,11 +99,11 @@ const parse = (scheduleString) => {
 };
 
 const filesExist = (files) => {
-  if (!_.every(files, file => (path.extname(file) === '.js'))) {
+  if (!_.every(files, (file) => (path.extname(file) === '.js'))) {
     throw new Error('second word of schedule string must be comma-delimited list of .js files, no spaces');
   }
 
-  _.forEach(files, file => {
+  _.forEach(files, (file) => {
     if (!fs.existsSync(file)) {
       throw new Error(`file: ${file} not found.`);
     }

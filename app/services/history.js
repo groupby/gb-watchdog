@@ -92,11 +92,11 @@ const History = function (esClient, esIndexSuffix) {
         body:   query,
         ignore: 404
       });
-    }).then(response => {
+    }).then((response) => {
       if (response.status === 404) {
         return [];
       } else {
-        return _.map(response.hits.hits, hit => new Result(hit._source));
+        return _.map(response.hits.hits, (hit) => new Result(hit._source));
       }
     });
   };

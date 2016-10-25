@@ -5,7 +5,7 @@ const reporter      = require('./reporter');
 const History       = require('./history');
 const BlipClient    = require('blip-client');
 
-const log = require('../../config').log;
+// const log = require('../../config').log;
 
 module.exports = function (config) {
   const elasticsearch = require('../../config/elasticsearch')((config.elasticsearch && config.elasticsearch.logLevel) || 'warn');

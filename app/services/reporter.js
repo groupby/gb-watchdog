@@ -1,8 +1,6 @@
 const _      = require('lodash');
 const moment = require('moment');
 
-const MOMENT_FORMAT = 'dddd, MMMM Do YYYY, h:mm:ss a';
-
 const reporter = function (runner, options) {
   const result = {
     total:      runner.total,

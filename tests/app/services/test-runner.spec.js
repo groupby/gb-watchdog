@@ -14,13 +14,7 @@ const TestRunner = require('../../../app/services/test-runner');
 chai.use(chaiAsPromised);
 
 describe('test-runner service', ()=> {
-  const slackConfig = {
-    url:      'http://fakeurl.com',
-    username: 'bot',
-    channel:  '#fake_channel'
-  };
-
-  it('should run tests', done => {
+  it('should run tests', (done) => {
     let passes    = 0;
     let fails     = 0;
     let end       = 0;
@@ -69,7 +63,7 @@ describe('test-runner service', ()=> {
     testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
   });
 
-  it('should abort tests', done => {
+  it('should abort tests', (done) => {
     let options   = null;
     const slack   = 'fake slack';
     const history = 'fake history';
@@ -105,12 +99,10 @@ describe('test-runner service', ()=> {
     let fails       = 0;
     let end         = 0;
     let options     = null;
-    let slackCalled = false;
 
     const slack = {
       send: (message) => {
         expect(message.text).to.match(/noopTest/);
-        slackCalled = true;
         testRunner.abort();
         done();
       }
@@ -162,7 +154,7 @@ describe('test-runner service', ()=> {
     testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
   });
 
-  it('should update status via history', done => {
+  it('should update status via history', (done) => {
     let passes  = 0;
     let fails   = 0;
     let end     = 0;
@@ -207,7 +199,7 @@ describe('test-runner service', ()=> {
       return this;
     };
 
-    let historySent   = [];
+    const historySent   = [];
     const mockHistory = {
       addResult: (result)=> {
         historySent.push(result);

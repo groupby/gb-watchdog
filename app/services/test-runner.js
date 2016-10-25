@@ -9,8 +9,8 @@ const MOMENT_FORMAT = 'dddd, MMMM Do YYYY, h:mm:ss a';
 
 const TestRunner = function (reporter, slack, slackConfig, history, blipClient) {
   const self      = this;
-  let mochaRunner = {};
-  let curStatus   = {};
+  const mochaRunner = {};
+  const curStatus   = {};
 
   if (_.isObject(slack) && !_.isFunction(slack.send)){
     throw new Error('if provided, slack must have a send function');
@@ -45,7 +45,7 @@ const TestRunner = function (reporter, slack, slackConfig, history, blipClient) 
         text += `Incomplete: ${result.incomplete}`;
         text += '\n\n';
         text += 'Errors:';
-        result.tests.forEach(test => {
+        result.tests.forEach((test) => {
           if (test.error) {
             text += '\n\n';
             text += `Test:    ${test.name}\n`;
@@ -103,7 +103,7 @@ const TestRunner = function (reporter, slack, slackConfig, history, blipClient) 
         statusCallback: statusCallback
       });
 
-      _.forEach(files, file => mocha.addFile(file));
+      _.forEach(files, (file) => mocha.addFile(file));
       mochaRunner[name] = mocha.run();
     } else {
       log.warn(`Already running test for schedule '${name}, skipping this run'`);

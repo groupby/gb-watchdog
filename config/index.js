@@ -84,7 +84,7 @@ const SCHEMA = {
   }
 };
 
-const setConfig = config => {
+const setConfig = (config) => {
   inspector.sanitize(SCHEMA, config);
   const result = inspector.validate(SCHEMA, config);
 
