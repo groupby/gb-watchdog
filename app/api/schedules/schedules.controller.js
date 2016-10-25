@@ -1,107 +1,101 @@
 /*eslint no-magic-numbers: "off" */
-const services  = require('../../services');
 const Scheduler = require('../../services/scheduler');
 const utils     = require('../../../utils');
 
-const getSchedules = (req, res)=> {
-  res.status(200).json(services.scheduler.getAll());
-};
+module.exports = function(services) {
+  const self = this;
 
-const addSchedule = (req, res)=> {
-  if (!Scheduler.NAME_REGEX.test(req.body.name)) {
-    res.status(400).json({error: 'schedule name must have alphanumeric characters only'});
-    return;
-  }
+  self.getSchedules = (req, res)=> {
+    res.status(200).json(services.scheduler.getAll());
+  };
 
-  try {
-    services.scheduler.add(req.body.name, req.body.schedule);
-    res.status(201).json();
-  } catch (ex) {
-    utils.processError(ex, res);
-  }
-};
+  self.addSchedule = (req, res)=> {
+    if (!Scheduler.NAME_REGEX.test(req.body.name)) {
+      res.status(400).json({error: 'schedule name must have alphanumeric characters only'});
+      return;
+    }
 
-const getSchedule = (req, res)=> {
-  const id = req.params.id;
+    try {
+      services.scheduler.add(req.body.name, req.body.schedule);
+      res.status(201).json();
+    } catch (ex) {
+      utils.processError(ex, res);
+    }
+  };
 
-  if (!Scheduler.NAME_REGEX.test(id)) {
-    res.status(400).json({error: 'schedule name must have alphanumeric characters only'});
-    return;
-  }
+  self.getSchedule = (req, res)=> {
+    const id = req.params.id;
 
-  try {
-    res.status(200).json(services.scheduler.get(id));
-  } catch (ex) {
-    utils.processError(ex, res);
-  }
-};
+    if (!Scheduler.NAME_REGEX.test(id)) {
+      res.status(400).json({error: 'schedule name must have alphanumeric characters only'});
+      return;
+    }
 
-const updateSchedule = (req, res)=> {
-  const id = req.params.id;
+    try {
+      res.status(200).json(services.scheduler.get(id));
+    } catch (ex) {
+      utils.processError(ex, res);
+    }
+  };
 
-  if (!Scheduler.NAME_REGEX.test(id)) {
-    res.status(400).json({error: 'schedule name must have alphanumeric characters only'});
-    return;
-  }
+  self.updateSchedule = (req, res)=> {
+    const id = req.params.id;
 
-  try {
-    services.scheduler.update(id, req.body.schedule);
-    res.status(201).json();
-  } catch (ex) {
-    utils.processError(ex, res);
-  }
-};
+    if (!Scheduler.NAME_REGEX.test(id)) {
+      res.status(400).json({error: 'schedule name must have alphanumeric characters only'});
+      return;
+    }
 
-const deleteSchedule = (req, res)=> {
-  const id = req.params.id;
+    try {
+      services.scheduler.update(id, req.body.schedule);
+      res.status(201).json();
+    } catch (ex) {
+      utils.processError(ex, res);
+    }
+  };
 
-  if (!Scheduler.NAME_REGEX.test(id)) {
-    res.status(400).json({error: 'schedule name must have alphanumeric characters only'});
-    return;
-  }
+  self.deleteSchedule = (req, res)=> {
+    const id = req.params.id;
 
-  try {
-    services.scheduler.delete(id);
-    res.status(204).json();
-  } catch (ex) {
-    utils.processError(ex, res);
-  }
-};
+    if (!Scheduler.NAME_REGEX.test(id)) {
+      res.status(400).json({error: 'schedule name must have alphanumeric characters only'});
+      return;
+    }
 
-const deleteSchedules = (req, res)=> {
-  try {
-    services.scheduler.deleteAll();
-    res.status(204).json();
-  } catch (ex) {
-    utils.processError(ex, res);
-  }
-};
+    try {
+      services.scheduler.delete(id);
+      res.status(204).json();
+    } catch (ex) {
+      utils.processError(ex, res);
+    }
+  };
 
-const startScheduler = (req, res) => {
-  try {
-    services.scheduler.start();
-    res.status(200).json({message: 'started'});
-  } catch (ex) {
-    utils.processError(ex, res);
-  }
-};
+  self.deleteSchedules = (req, res)=> {
+    try {
+      services.scheduler.deleteAll();
+      res.status(204).json();
+    } catch (ex) {
+      utils.processError(ex, res);
+    }
+  };
 
-const stopScheduler = (req, res) => {
-  try {
-    services.scheduler.stop();
-    res.status(200).json({message: 'stopped'});
-  } catch (ex) {
-    utils.processError(ex, res);
-  }
-};
+  self.startScheduler = (req, res) => {
+    try {
+      services.scheduler.start();
+      res.status(200).json({message: 'started'});
+    } catch (ex) {
+      utils.processError(ex, res);
+    }
+  };
 
-module.exports = {
-  getSchedules:   getSchedules,
-  addSchedule:    addSchedule,
-  getSchedule:    getSchedule,
-  updateSchedule: updateSchedule,
-  deleteSchedule: deleteSchedule,
-  deleteSchedules: deleteSchedules,
-  startScheduler: startScheduler,
-  stopScheduler:  stopScheduler
+  self.stopScheduler = (req, res) => {
+    try {
+      services.scheduler.stop();
+      res.status(200).json({message: 'stopped'});
+    } catch (ex) {
+      utils.processError(ex, res);
+    }
+  };
+
+  return self;
 };

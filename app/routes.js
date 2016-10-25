@@ -4,10 +4,13 @@ const router  = express.Router();
 const cors    = require('cors');
 
 const api    = require('./api');
-const config = require('../config');
 
-module.exports = (app) => {
+module.exports = (app, config) => {
   const log    = config.log;
+
+  if (!app || !app.services) {
+    throw new Error('app.services must be defined');
+  }
 
   // Check for API key regardless of the route
   app.use('*', router.use((req, res, next) => {
@@ -37,7 +40,7 @@ module.exports = (app) => {
   app.options('*', cors());
 
   // All valid routes handled here
-  app.use(api());
+  app.use(api(app.services));
 
   // Everything else is a 404
   app.use((req, res) => {

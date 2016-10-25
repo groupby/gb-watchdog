@@ -1,34 +1,32 @@
 const _             = require('lodash');
 const Promise       = require('bluebird');
 const Result        = require('../models/result');
-const elasticsearch = require('../../config/elasticsearch');
 const config        = require('../../config');
+const elasticsearch = require('../../config/elasticsearch')('warn');
+const log = config.log;
 
 const MAX_LOCAL_HISTORY = 10000;
 
-const History = function (host) {
+const History = function (esClient, esIndexSuffix) {
   const self = this;
-  const log  = config.log;
-  let client = null;
 
   let INDEX_NAME = null;
 
-  if (_.isString(host) && host.length > 0) {
-    if (!config.elasticsearch.indexSuffix) {
-      throw new Error('config.elasticsearch.indexSuffix must be defined');
-    }
+  if (esClient && !_.isObject(esClient)) {
+    throw new Error('esClient must be an object');
+  }
 
-    INDEX_NAME =`${config.FRAMEWORK_NAME}_${config.elasticsearch.indexSuffix}`;
-    client = elasticsearch.createClient(host);
+  if (esClient && !esIndexSuffix) {
+    throw new Error('esIndexSuffix must be defined');
   } else {
-    client = null;
+    INDEX_NAME =`watchdog_${esIndexSuffix}`;
   }
 
   let localHistory = [];
 
   self.getResults = (query) => {
     log.debug('Getting results with query: ', JSON.stringify(query));
-    if (client !== null) {
+    if (esClient) {
       return getEsResults(query);
     } else {
       if (query) {
@@ -46,7 +44,7 @@ const History = function (host) {
 
     log.debug('Adding result: ', JSON.stringify(result));
 
-    if (client !== null) {
+    if (esClient) {
       return addEsResult(result);
     } else {
       localHistory.push(result);
@@ -62,7 +60,7 @@ const History = function (host) {
   self.clearResults = () => {
     log.debug('Clearing results');
 
-    if (client !== null) {
+    if (esClient) {
       return clearEsResults();
     } else {
       localHistory = [];
@@ -71,7 +69,7 @@ const History = function (host) {
   };
 
   const clearEsResults = () => {
-    return client.indices.delete({
+    return esClient.indices.delete({
       index:  INDEX_NAME,
       ignore: 404
     });
@@ -79,7 +77,7 @@ const History = function (host) {
 
   const addEsResult = (result) => {
     return ensureTemplate().then(()=> {
-      return client.create({
+      return esClient.create({
         index: INDEX_NAME,
         type:  'history',
         body:  result
@@ -89,7 +87,7 @@ const History = function (host) {
 
   const getEsResults = (query) => {
     return ensureTemplate().then(()=> {
-      return client.search({
+      return esClient.search({
         index:  INDEX_NAME,
         body:   query,
         ignore: 404
@@ -104,8 +102,76 @@ const History = function (host) {
   };
 
   const ensureTemplate = () => {
-    return elasticsearch.ensureTemplateExists(client);
+    return elasticsearch.ensureTemplateExists(esClient, 'watchdog', WATCHDOG_INDEX_TEMPLATE);
   };
+};
+
+const WATCHDOG_INDEX_TEMPLATE = {
+  template: `watchdog*`,
+  settings: {
+    number_of_shards:   1,
+    number_of_replicas: 1
+  },
+  mappings: {
+    history: {
+      properties: {
+        start:      {
+          type:   'date',
+          format: 'date_time'
+        },
+        end:        {
+          type:   'date',
+          format: 'date_time'
+        },
+        duration:   {
+          type: 'integer'
+        },
+        passes:     {
+          type: 'integer'
+        },
+        fails:      {
+          type: 'integer'
+        },
+        incomplete: {
+          type: 'integer'
+        },
+        total:      {
+          type: 'integer'
+        },
+        schedule: {
+          properties: {
+            name: {
+              type:  'string',
+              index: 'not_analyzed'
+            },
+            files: {
+              type:  'string',
+              index: 'not_analyzed'
+            }
+          }
+        },
+        tests:      {
+          properties: {
+            name:     {
+              type:  'string',
+              index: 'not_analyzed'
+            },
+            duration: {
+              type: 'integer'
+            },
+            error:    {
+              type:  'string',
+              index: 'analyzed'
+            },
+            stack:    {
+              type:  'string',
+              index: 'analyzed'
+            }
+          }
+        }
+      }
+    }
+  }
 };
 
 module.exports = History;

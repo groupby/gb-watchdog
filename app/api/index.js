@@ -1,13 +1,15 @@
 const express    = require('express');
-const router     = express.Router();
 const results    = require('./results');
 const schedules  = require('./schedules');
-const controller = require('./root.controller');
+const Controller = require('./root.controller');
 
-module.exports = () => {
+module.exports = function(services) {
+  const router     = express.Router();
+  const controller = new Controller(services);
   router.get('/status', controller.getStatus);
+  router.get('/health', controller.getHealth);
 
-  router.use('/results', results());
-  router.use('/schedules', schedules());
+  router.use('/results', results(services));
+  router.use('/schedules', schedules(services));
   return router;
 };

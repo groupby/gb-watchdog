@@ -126,9 +126,6 @@ const DEFAULT_CONFIG = {
   setConfig:      setConfig,
   FRAMEWORK_NAME: 'watchdog',
   logLevel:       'info',
-  elasticsearch:  {
-    logLevel: 'warn'
-  },
   port:           7000
 };
 

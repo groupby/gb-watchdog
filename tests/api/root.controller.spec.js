@@ -65,7 +65,7 @@ describe('root api', ()=> {
   });
 });
 
-describe.skip('protected root api', ()=> {
+describe('protected root api', ()=> {
   let watchdog = null;
 
   beforeEach((done) => {

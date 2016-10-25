@@ -3,28 +3,26 @@ const chai           = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const expect         = chai.expect;
 const moment         = require('moment');
-const elasticsearch  = require('../../../config/elasticsearch');
+const elasticsearch  = require('../../../config/elasticsearch')('info');
 const _ = require('lodash');
 
-const config  = require('../../../config');
 const History = require('../../../app/services/history');
 
 chai.use(chaiAsPromised);
 
 describe('history service', ()=> {
   const INDEX  = 'watchdog_testing';
-  const client = elasticsearch.createClient(config.elasticsearch.host);
+
+  const esConfig = {
+    host:        'localhost:9200',
+    apiVersion:  '2.2',
+    logLevel:    'debug',
+    indexSuffix: 'testing'
+  };
+
+  const client = elasticsearch.createClient(esConfig.host, esConfig.apiVersion);
 
   beforeEach((done)=> {
-    config.setConfig({
-      elasticsearch: {
-        host:        'localhost:9200',
-        apiVersion:  '2.2',
-        logLevel:    'debug',
-        indexSuffix: 'testing'
-      }
-    });
-
     client.indices.delete({
       index:  INDEX,
       ignore: 404
@@ -158,7 +156,7 @@ describe('history service', ()=> {
   });
 
   it('should add results to elasticsearch', done => {
-    const history = new History('localhost:9200');
+    const history = new History(client, 'testing');
 
     const result = {
       start:      moment().toISOString(),
@@ -200,7 +198,7 @@ describe('history service', ()=> {
   });
 
   it('should clear results from elasticsearch', done => {
-    const history = new History('localhost:9200');
+    const history = new History(client, 'testing');
 
     const result = {
       start:      moment().toISOString(),
