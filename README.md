@@ -52,6 +52,14 @@ var configuration = {
         apiVersion: 2.2
     },
     
+    // Defaults to no blip server
+    blipServer: {
+      host: 'server.something.com',
+      port: 8080,
+      serviceName: 'watchdog',
+      environment: 'testing'
+    },
+    
     // Defaualts to no slack integration
     slack: {
         url:        'http://my-webhook-url.com',

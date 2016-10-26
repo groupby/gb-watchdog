@@ -1,10 +1,10 @@
 const express    = require('express');
-const router     = express.Router();
-const controller = require('./results.controller');
+const Controller = require('./results.controller');
 
-router.get('/', controller.getResults);
-router.post('/', controller.getResults);
-
-module.exports = function () {
+module.exports = function (services) {
+  const router     = express.Router();
+  const controller = new Controller(services);
+  router.get('/', controller.getResults);
+  router.post('/', controller.getResults);
   return router;
 };

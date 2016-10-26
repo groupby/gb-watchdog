@@ -9,7 +9,7 @@ const Watchdog       = require('../../../index');
 chai.use(chaiAsPromised);
 
 describe('results api', ()=> {
-  it('should get no results for empty system', done => {
+  it('should get no results for empty system', (done) => {
     const watchdog = new Watchdog({logLevel: 'debug'});
 
     request(watchdog).get('/results')
@@ -21,7 +21,7 @@ describe('results api', ()=> {
       }).catch(done);
   });
 
-  it('should get results', done => {
+  it('should get results', (done) => {
     const watchdog = new Watchdog({logLevel: 'debug'});
 
     const params = {

@@ -3,13 +3,13 @@ const later    = require('later');
 const moment   = require('moment');
 const Schedule = require('../models/schedule');
 const config   = require('../../config');
+const log = config.log;
 
 const MSEC_IN_SEC    = 1000;
 const STATUS_STOPPED = 'stopped';
 const STATUS_RUNNING = 'running';
 
 const Scheduler = function (testRunner) {
-  const log  = config.log;
   const self = this;
 
   if (!_.isObject(testRunner) || !_.isFunction(testRunner.run) || testRunner.run.length < 1) {

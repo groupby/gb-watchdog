@@ -1,15 +1,20 @@
 /*eslint no-magic-numbers: "off" */
-const services = require('../services');
 
-const getStatus = (req, res) => {
-  const response = {
-    scheduler:  services.scheduler.status(),
-    testRunner: services.testRunner.status()
+module.exports = function(services) {
+  const self = this;
+
+  self.getStatus = (req, res) => {
+    const response = {
+      scheduler:  services.scheduler.status(),
+      testRunner: services.testRunner.status()
+    };
+
+    res.status(200).json(response);
   };
 
-  res.status(200).json(response);
-};
+  self.getHealth = (req, res) => {
+    res.status(200).send();
+  };
 
-module.exports = {
-  getStatus: getStatus
+  return self;
 };

@@ -8,72 +8,9 @@ const Reporter = require('../../../app/services/reporter');
 chai.use(chaiAsPromised);
 
 describe('reporter service', ()=> {
-  it('should report status at end via slack', ()=> {
-    const eventCallbacks = {};
-    const mockRunner     = {
-      total: 10,
-      on:    (event, callback) => {
-        eventCallbacks[event] = callback;
-      }
-    };
 
-    let slackSent   = null;
-    const mockSlack = {
-      send: (arg)=> {
-        slackSent = arg;
-      }
-    };
 
-    const options = {
-      reporterOptions: {
-        slack:    mockSlack,
-        channel:  'test_channel',
-        username: 'test_user',
-        schedule:   {
-          name:  'default',
-          files: ['sometest.js']
-        }
-      }
-    };
-
-    new Reporter(mockRunner, options);
-
-    let curTestTitle = 'test title';
-    const testInfo     = {
-      fullTitle: ()=> {
-        return curTestTitle;
-      },
-      duration:  10
-    };
-    eventCallbacks['pass'](testInfo);
-
-    curTestTitle      = 'test title 2';
-    testInfo.duration = 20;
-    eventCallbacks['pass'](testInfo);
-
-    curTestTitle      = 'test title 3';
-    testInfo.duration = 15;
-    eventCallbacks['pass'](testInfo);
-
-    curTestTitle      = 'test title 4';
-    testInfo.duration = 210;
-    testInfo.message  = 'test error 1';
-    testInfo.stack    = 'stack trace here';
-    eventCallbacks['fail'](testInfo, {
-      message: 'test error 1',
-      stack:   'stack trace here'
-    });
-
-    eventCallbacks['end']();
-    expect(slackSent.text).to.match(/Passes:\s+3/);
-    expect(slackSent.text).to.match(/Failures:\s+1/);
-    expect(slackSent.text).to.match(/Incomplete:\s+6/);
-    expect(slackSent.text).to.match(/Test:\s+test title 4/);
-    expect(slackSent.text).to.match(/Msg:\s+test error 1/);
-    expect(slackSent.text).to.match(/Stack:\s+stack trace here/);
-  });
-
-  it('should update status via callback', done => {
+  it('should update status via callback', (done) => {
     const eventCallbacks = {};
     const mockRunner     = {
       total: 10,
@@ -191,75 +128,6 @@ describe('reporter service', ()=> {
       expect(statusSent.end).to.be.defined;
       expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
       expect(statusSent.tests.length).to.eql(4);
-      done();
-    }, 5);
-  });
-
-  it('should update status via history', done => {
-    const eventCallbacks = {};
-    const mockRunner     = {
-      total: 10,
-      on:    (event, callback) => {
-        eventCallbacks[event] = callback;
-      }
-    };
-
-    let historySent   = null;
-    const mockHistory = {
-      addResult: (arg)=> {
-        historySent = arg;
-      }
-    };
-
-    const options = {
-      reporterOptions: {
-        history: mockHistory,
-        schedule:   {
-          name:  'default',
-          files: ['sometest.js']
-        }
-      }
-    };
-
-    new Reporter(mockRunner, options);
-
-    let curTestTitle = 'test title';
-    const testInfo     = {
-      fullTitle: ()=> {
-        return curTestTitle;
-      },
-      duration:  10
-    };
-    eventCallbacks['pass'](testInfo);
-
-    curTestTitle      = 'test title 2';
-    testInfo.duration = 20;
-    eventCallbacks['pass'](testInfo);
-
-    curTestTitle      = 'test title 3';
-    testInfo.duration = 15;
-    eventCallbacks['pass'](testInfo);
-
-    curTestTitle      = 'test title 4';
-    testInfo.duration = 210;
-    testInfo.message  = 'test error 1';
-    testInfo.stack    = 'stack trace here';
-    eventCallbacks['fail'](testInfo, {
-      message: 'test error 1',
-      stack:   'stack trace here'
-    });
-
-    setTimeout(()=>{
-      eventCallbacks['end']();
-      expect(historySent.total).to.eql(10);
-      expect(historySent.passes).to.eql(3);
-      expect(historySent.fails).to.eql(1);
-      expect(historySent.incomplete).to.eql(6);
-      expect(historySent.duration).to.not.eql(0);
-      expect(historySent.start).to.be.defined;
-      expect(historySent.end).to.be.defined;
-      expect(historySent.schedule).to.eql(options.reporterOptions.schedule);
-      expect(historySent.tests.length).to.eql(4);
       done();
     }, 5);
   });

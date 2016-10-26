@@ -24,7 +24,7 @@ describe('schedules api', ()=> {
     }
   });
 
-  it('should add schedules and return existing schedules', done => {
+  it('should add schedules and return existing schedules', (done) => {
     request(watchdog).get('/schedules')
       .set('Content-Type', 'application/json')
       .expect(200)
@@ -52,7 +52,7 @@ describe('schedules api', ()=> {
       });
   });
 
-  it('should return specific schedules', done => {
+  it('should return specific schedules', (done) => {
     request(watchdog).get('/schedules')
       .set('Content-Type', 'application/json')
       .expect(200)
@@ -79,7 +79,7 @@ describe('schedules api', ()=> {
       });
   });
 
-  it('should update specific schedules', done => {
+  it('should update specific schedules', (done) => {
     request(watchdog).get('/schedules')
       .set('Content-Type', 'application/json')
       .expect(200)
@@ -120,7 +120,7 @@ describe('schedules api', ()=> {
       });
   });
 
-  it('should delete specific schedules', done => {
+  it('should delete specific schedules', (done) => {
     request(watchdog).get('/schedules')
       .set('Content-Type', 'application/json')
       .expect(200)
@@ -151,7 +151,7 @@ describe('schedules api', ()=> {
       });
   });
 
-  it('should return specific schedules', done => {
+  it('should return specific schedules', (done) => {
     request(watchdog).get('/schedules')
       .set('Content-Type', 'application/json')
       .expect(200)
@@ -178,7 +178,7 @@ describe('schedules api', ()=> {
       });
   });
 
-  it('should start scheduler', done => {
+  it('should start scheduler', (done) => {
     request(watchdog).post('/schedules')
       .set('Content-Type', 'application/json')
       .send({
@@ -206,7 +206,7 @@ describe('schedules api', ()=> {
       });
   });
 
-  it('should stop scheduler', done => {
+  it('should stop scheduler', (done) => {
     request(watchdog).post('/schedules')
       .set('Content-Type', 'application/json')
       .send({

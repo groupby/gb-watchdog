@@ -32,6 +32,21 @@ const SCHEMA = {
         }
       }
     },
+    blipServer:    {
+      optional:   true,
+      type:       'object',
+      properties: {
+        host: {
+          type:      'string',
+          minLength: 1
+        },
+        port: {
+          type: 'integer',
+          gt:   0,
+          lte:  65535
+        },
+      }
+    },
     slack:         {
       optional:   true,
       type:       'object',
@@ -69,7 +84,7 @@ const SCHEMA = {
   }
 };
 
-const setConfig = config => {
+const setConfig = (config) => {
   inspector.sanitize(SCHEMA, config);
   const result = inspector.validate(SCHEMA, config);
 
@@ -111,9 +126,6 @@ const DEFAULT_CONFIG = {
   setConfig:      setConfig,
   FRAMEWORK_NAME: 'watchdog',
   logLevel:       'info',
-  elasticsearch:  {
-    logLevel: 'warn'
-  },
   port:           7000
 };
 

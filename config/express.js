@@ -5,12 +5,11 @@ const cookieParser   = require('cookie-parser');
 const errorHandler   = require('errorhandler');
 const cors           = require('cors');
 const expressLogger  = require('express-bunyan-logger');
-const config         = require('./index');
 const PrettyStream   = require('bunyan-prettystream');
 const prettyStdOut   = new PrettyStream({mode: 'dev'});
 prettyStdOut.pipe(process.stdout);
 
-module.exports = function (app) {
+module.exports = function (app, config) {
   const env = app.get('env');
 
   const defaultContentTypeMiddleware = (req, res, next) => {
@@ -27,7 +26,7 @@ module.exports = function (app) {
   app.use(cookieParser());
   app.use(cors());
   app.use(expressLogger({
-    name:     `${config.FRAMEWORK_NAME}-express`,
+    name:    `${config.FRAMEWORK_NAME}-express`,
     format:   ":status-code - :method :url - response-time: :response-time",
     streams:  [
       {
