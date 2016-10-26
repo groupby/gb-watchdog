@@ -16,7 +16,7 @@ module.exports = function (config) {
 
   const history    = new History(esClient, config.elasticsearch && config.elasticsearch.indexSuffix);
   const slack      = (config.slack) ? new Slack(config.slack.url) : null;
-  const testRunner = new TestRunner(reporter, slack, history, blipClient);
+  const testRunner = new TestRunner(reporter, slack, config.slack, history, blipClient);
   const scheduler  = new Scheduler(testRunner);
 
   return {

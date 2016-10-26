@@ -62,6 +62,10 @@ const TestRunner = function (reporter, slack, slackConfig, history, blipClient) 
       }
     }
 
+    if (history) {
+      history.addResult(result);
+    }
+
     if (blipClient) {
       blipClient.write(result);
     }
@@ -80,10 +84,6 @@ const TestRunner = function (reporter, slack, slackConfig, history, blipClient) 
     if (update.end !== null) {
       handleFinalResults(update);
       delete mochaRunner[update.schedule.name]
-    }
-
-    if (history) {
-      history.addResult(update);
     }
   };
 
