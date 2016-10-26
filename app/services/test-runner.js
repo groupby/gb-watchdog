@@ -105,6 +105,17 @@ const TestRunner = function (reporter, slack, slackConfig, history, blipClient) 
 
       _.forEach(files, (file) => mocha.addFile(file));
       mochaRunner[name] = mocha.run();
+
+      // Attempt to address mocha memory leaks
+      mochaRunner[name].on('suite end', function(suite) {
+        log.debug('deleting mocha suite');
+        delete suite.tests;
+        delete suite._beforeAll;
+        delete suite._beforeEach;
+        delete suite._afterEach;
+        delete suite.ctx;
+        delete suite._afterAll;
+      });
     } else {
       log.warn(`Already running test for schedule '${name}, skipping this run'`);
     }
