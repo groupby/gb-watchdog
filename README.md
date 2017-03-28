@@ -46,6 +46,9 @@ var configuration = {
     // in the form: `api_key=XXX-XXX-XXX-XXX`
     apiKey: 'XXX-XXX-XXX-XXX',
     
+    // Defaults to no Sysdig integration. Send alerts to sysdig on failure.
+    sysdigApiKey: 'XXX-XXX-XXX',
+    
     // Defaults to no elasticsearch integration, only in-memory
     // If provided, you need to specify host, indexSuffix, and apiVersion. Optionally logLevel
     elasticsearch: {

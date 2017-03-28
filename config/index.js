@@ -8,6 +8,36 @@ prettyStdOut.pipe(process.stdout);
 const SCHEMA = {
   type:       'object',
   properties: {
+    sysdig:        {
+      optional:   true,
+      properties: {
+        apiKey: {
+          type:      'string',
+          minLength: 1
+        },
+        alert:  {
+          properties: {
+            namespace:   {
+              type:      'string',
+              minLength: 1
+            },
+            severity:    {
+              type:      'string',
+              minLength: 1
+            },
+            tags:        {
+              optional:   true,
+              properties: {
+                '*': {
+                  type:      'string',
+                  minLength: 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     elasticsearch: {
       optional:   true,
       type:       'object',
@@ -93,7 +123,7 @@ const setConfig = (config) => {
   }
 
   // This just resets the initial config back to default without overwriting the root reference
-  _.forEach(currentConfig, (value, key)=> {
+  _.forEach(currentConfig, (value, key) => {
     delete currentConfig[key];
 
     if (DEFAULT_CONFIG[key]) {
