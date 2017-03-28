@@ -32,7 +32,7 @@ const Sysdig = function (sysdigApiToken) {
 
     return rp(options)
       .then(() => {
-        log.info(`200 received from sysdig`);
+        log.debug(`200 received from sysdig`);
       })
       .catch((error) => {
         log.error(`error posting to sysdig: ${error}`);

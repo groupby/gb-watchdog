@@ -17,7 +17,7 @@ module.exports = function (config) {
 
   const history = new History(esClient, config.elasticsearch && config.elasticsearch.indexSuffix);
   const slack   = config.slack ? new Slack(config.slack.url) : null;
-  const sysdig  = config.sysdigApiKey ? new Sysdig(config.sysdigApiKey) : null;
+  const sysdig  = config.sysdig ? new Sysdig(config.sysdig.apiKey) : null;
 
   const testRunner = new TestRunner({reporter, slack, slackConfig: config.slack, history, blipClient, sysdig, sysdigConfig: config.sysdig});
   const scheduler  = new Scheduler(testRunner);

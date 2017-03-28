@@ -17,14 +17,6 @@ const SCHEMA = {
         },
         alert:  {
           properties: {
-            name:        {
-              type:      'string',
-              minLength: 1
-            },
-            description: {
-              type:      'string',
-              minLength: 1
-            },
             namespace:   {
               type:      'string',
               minLength: 1
