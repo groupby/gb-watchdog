@@ -7,27 +7,39 @@ const decache = require('decache');
 
 const MOMENT_FORMAT = 'dddd, MMMM Do YYYY, h:mm:ss a';
 
-const TestRunner = function (reporter, slack, slackConfig, history, blipClient) {
+const TestRunner = function (services) {
   const self      = this;
   const mochaRunner = {};
   const curStatus   = {};
 
-  if (_.isObject(slack) && !_.isFunction(slack.send)){
+  if (_.isObject(services.slack) && !_.isFunction(services.slack.send)){
     throw new Error('if provided, slack must have a send function');
   }
 
-  if (_.isObject(history) && !_.isFunction(history.addResult)){
+  if (_.isObject(services.slack) && !_.isObject(services.slackConfig)){
+    throw new Error('if slack is provided, must have slackConfig');
+  }
+
+  if (_.isObject(services.sysdig) && !_.isFunction(services.sysdig.sendEvent)){
+    throw new Error('if provided, sysdig must have a sendEvent function');
+  }
+
+  if (_.isObject(services.sysdig) && !_.isObject(services.sysdigConfig)){
+    throw new Error('if sysdig is provided, must have sysdigConfig');
+  }
+
+  if (_.isObject(services.history) && !_.isFunction(services.history.addResult)){
     throw new Error('if provided, history must have a addResult function');
   }
 
-  if (_.isObject(blipClient) && !_.isFunction(blipClient.write)){
+  if (_.isObject(services.blipClient) && !_.isFunction(services.blipClient.write)){
     throw new Error('if provided, blipClient must have a write function');
   }
 
   const handleFinalResults = (result) => {
     log.debug('Logging final results');
 
-    if (slack) {
+    if (services.slack) {
       if (result.fails > 0) {
 
         let text = '\n';
@@ -54,20 +66,37 @@ const TestRunner = function (reporter, slack, slackConfig, history, blipClient) 
           }
         });
 
-        slack.send({
+        services.slack.send({
           text:     text,
-          channel:  slackConfig.channel,
-          username: slackConfig.username
+          channel:  services.slackConfig.channel,
+          username: services.slackConfig.username
         });
       }
     }
 
-    if (history) {
-      history.addResult(result);
+    if (result.fails > 0 && _.isObject(services.sysdig)) {
+      const alert = services.sysdigConfig.alert;
+
+      let description = '';
+      result.tests.forEach((test) => {
+        if (test.error) {
+          description += '\n\n';
+          description += `Test:    ${test.name}\n`;
+          description += `Msg:     ${test.error}\n`;
+        }
+      });
+
+      services.sysdig.sendEvent(result.schedule.name, description, alert.severity, alert.namespace, Object.assign({}, alert.tags, {
+        testName: result.schedule.name
+      }));
     }
 
-    if (blipClient) {
-      blipClient.write(result);
+    if (_.isObject(services.history)) {
+      services.history.addResult(result);
+    }
+
+    if (_.isObject(services.blipClient)) {
+      services.blipClient.write(result);
     }
   };
 
@@ -95,7 +124,7 @@ const TestRunner = function (reporter, slack, slackConfig, history, blipClient) 
       decache('mocha');
       const Mocha = require('mocha');
       const mocha = new Mocha();
-      mocha.reporter(reporter, {
+      mocha.reporter(services.reporter, {
         schedule:       {
           name:  name,
           files: files
