@@ -2,6 +2,8 @@
 
 ## Installation
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/groupby/gb-watchdog.svg)](https://greenkeeper.io/)
+
 ```
 npm install gb-watchdog
 ```
