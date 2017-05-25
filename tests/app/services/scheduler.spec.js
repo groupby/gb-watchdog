@@ -12,22 +12,27 @@ const Scheduler = require('../../../app/services/scheduler');
 
 chai.use(chaiAsPromised);
 
-describe('scheduler service', ()=> {
+describe('scheduler service', () => {
   config.setConfig({logLevel: 'debug'});
   // const log = config.log;
 
   let scheduler      = null;
   let testRunnerMock = null;
 
-  beforeEach(()=> {
+  beforeEach(() => {
     testRunnerMock = {
-      run:   (arg) => {},
-      abort: ()=> {}
+      run:   (arg) => {
+      },
+      abort: () => {
+      },
+      getServices: () => {
+        return null;
+      }
     };
     scheduler      = new Scheduler(testRunnerMock);
   });
 
-  afterEach(()=> {
+  afterEach(() => {
     try {
       scheduler.stop();
     } catch (ex) {
@@ -35,7 +40,7 @@ describe('scheduler service', ()=> {
     }
   });
 
-  it('should add schedule to all schedules', ()=> {
+  it('should add schedule to all schedules', () => {
     let schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -51,7 +56,7 @@ describe('scheduler service', ()=> {
     expect(status.schedules.default.nextRun).to.eql('stopped');
   });
 
-  it('should NOT add schedule that already exists', ()=> {
+  it('should NOT add schedule that already exists', () => {
     const schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -65,7 +70,7 @@ describe('scheduler service', ()=> {
     expect(throws).to.throw(/schedule 'default' already exists/);
   });
 
-  it('should add schedule and start it if scheduler is running', ()=> {
+  it('should add schedule and start it if scheduler is running', () => {
     let schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -83,7 +88,7 @@ describe('scheduler service', ()=> {
     expect(moment(status.schedules.default.nextRun).valueOf()).to.be.above((new Date()).valueOf());
   });
 
-  it('should NOT add schedule without name', ()=> {
+  it('should NOT add schedule without name', () => {
     const schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -109,7 +114,7 @@ describe('scheduler service', ()=> {
     expect(throws).to.throw(/name must be string of 1-40 alphanumeric characters/);
   });
 
-  it('should parse and add schedule to all schedules', ()=> {
+  it('should parse and add schedule to all schedules', () => {
     let schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -151,7 +156,7 @@ describe('scheduler service', ()=> {
     expect(moment(status.schedules.default.nextRun).valueOf()).to.be.above(twoMinuteNextRun.valueOf());
   });
 
-  it('should NOT update schedule that doesnt exist', ()=> {
+  it('should NOT update schedule that doesnt exist', () => {
     const schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -163,7 +168,7 @@ describe('scheduler service', ()=> {
     expect(throws).to.throw(/schedule 'default' does not exist/);
   });
 
-  it('should NOT update a schedule without name', ()=> {
+  it('should NOT update a schedule without name', () => {
     let schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -196,7 +201,7 @@ describe('scheduler service', ()=> {
     expect(throws).to.throw(/name must be string of 1-40 alphanumeric characters/);
   });
 
-  it('should parse and update an existing schedule', ()=> {
+  it('should parse and update an existing schedule', () => {
     let schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -215,7 +220,7 @@ describe('scheduler service', ()=> {
     expect(schedules['default'].exceptions).to.be.empty;
   });
 
-  it('should stop and delete a running schedule by name', ()=> {
+  it('should stop and delete a running schedule by name', () => {
     let schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -234,7 +239,7 @@ describe('scheduler service', ()=> {
     expect(scheduler.status().schedules).to.eql({});
   });
 
-  it('should NOT delete a schedule that doesnt exist', ()=> {
+  it('should NOT delete a schedule that doesnt exist', () => {
     let schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -244,28 +249,28 @@ describe('scheduler service', ()=> {
     schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(1);
 
-    let throws = ()=> {
+    let throws = () => {
       scheduler.delete('notDefault');
     };
     expect(throws).to.throw(/schedule 'notDefault' does not exist/);
 
-    throws = ()=> {
+    throws = () => {
       scheduler.delete('');
     };
     expect(throws).to.throw(/name must be string of 1-40 alphanumeric characters/);
 
-    throws = ()=> {
+    throws = () => {
       scheduler.delete(1);
     };
     expect(throws).to.throw(/name must be string of 1-40 alphanumeric characters/);
 
-    throws = ()=> {
+    throws = () => {
       scheduler.delete(null);
     };
     expect(throws).to.throw(/name must be string of 1-40 alphanumeric characters/);
   });
 
-  it('should get a specific schedule', ()=> {
+  it('should get a specific schedule', () => {
     const schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -276,7 +281,7 @@ describe('scheduler service', ()=> {
     expect(gotSchedule.schedules).to.eql(schedule.schedules);
   });
 
-  it('should NOT get a specific schedule if it doesnt exist', ()=> {
+  it('should NOT get a specific schedule if it doesnt exist', () => {
     const schedules = scheduler.getAll();
     expect(_.size(schedules)).to.eql(0);
 
@@ -360,18 +365,19 @@ describe('scheduler service', ()=> {
     scheduler.stop();
   });
 
-  it('should NOT be created with an invalid testRunner', ()=> {
-    let throws = ()=> {
-      scheduler = new Scheduler(()=> {});
+  it('should NOT be created with an invalid testRunner', () => {
+    let throws = () => {
+      scheduler = new Scheduler(() => {
+      });
     };
     expect(throws).to.throws(/testRunner must have 'run' function/);
 
-    throws = ()=> {
+    throws = () => {
       scheduler = new Scheduler(null);
     };
     expect(throws).to.throws(/testRunner must have 'run' function/);
 
-    throws = ()=> {
+    throws = () => {
       scheduler = new Scheduler('');
     };
     expect(throws).to.throws(/testRunner must have 'run' function/);

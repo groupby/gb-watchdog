@@ -94,7 +94,7 @@ describe('test-runner service', () => {
     testRunner.abort();
   });
 
-  it('should report status at end via slack', (done) => {
+  it.only('should report status at end via slack', (done) => {
     let passes  = 0;
     let fails   = 0;
     let end     = 0;

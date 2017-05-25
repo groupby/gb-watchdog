@@ -3,7 +3,7 @@ const later    = require('later');
 const moment   = require('moment');
 const Schedule = require('../models/schedule');
 const config   = require('../../config');
-const log = config.log;
+const log      = config.log;
 
 const MSEC_IN_SEC    = 1000;
 const STATUS_STOPPED = 'stopped';
@@ -11,9 +11,14 @@ const STATUS_RUNNING = 'running';
 
 const Scheduler = function (testRunner) {
   const self = this;
+  let services = null;
 
   if (!_.isObject(testRunner) || !_.isFunction(testRunner.run) || testRunner.run.length < 1) {
     throw new Error(`testRunner must have 'run' function that takes at least one argument`);
+  }
+
+  if (_.isFunction(testRunner.getServices())){
+    services = testRunner.getServices();
   }
 
   let allSchedules     = {};
@@ -31,7 +36,7 @@ const Scheduler = function (testRunner) {
     }
 
     if (!(schedule instanceof Schedule)) {
-      schedule = new Schedule(schedule)
+      schedule = new Schedule(schedule);
     }
 
     log.info(`Adding schedule: ${name}`);
@@ -115,7 +120,7 @@ const Scheduler = function (testRunner) {
   };
 
   self.getAll = () => {
-    return _.cloneDeep(allSchedules)
+    return _.cloneDeep(allSchedules);
   };
 
   self.start = () => {
@@ -130,7 +135,12 @@ const Scheduler = function (testRunner) {
       running = true;
       log.info('Started');
     } else {
-      log.error('Cannot start, scheduler is already running');
+      const error = 'Cannot start, scheduler is already running';
+      if (_.isFunction(testRunner.logError())){
+        testRunner.logError(error);
+      } else {
+        log.error(error);
+      }
       throw new Error('Scheduler is already running');
     }
   };
@@ -154,7 +164,7 @@ const Scheduler = function (testRunner) {
     runningIntervals = {};
   };
 
-  const updateStatus = (name)=> {
+  const updateStatus = (name) => {
     if (running) {
       // NOTE: This is a gross hack
       // Necessary because later.js may return now() as a response from next(1)
@@ -168,7 +178,7 @@ const Scheduler = function (testRunner) {
   };
 
   const startInterval = (name) => {
-    return later.setInterval(()=> {
+    return later.setInterval(() => {
       scheduleStatus[name].prevRun = moment().toISOString();
       log.debug(`Running schedule '${name} at ${scheduleStatus[name].prevRun}'`);
       testRunner.run(name, allSchedules[name].files);
