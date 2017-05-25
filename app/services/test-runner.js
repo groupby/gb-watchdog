@@ -170,7 +170,7 @@ const TestRunner = function (services) {
 
   self.logError = (message) => {
     log.error(message);
-    if (services.slack) {
+    if (services.slack && services.slackConfig) {
       services.slack.send({
         text:     message,
         channel:  services.slackConfig.channel,

@@ -136,7 +136,7 @@ const Scheduler = function (testRunner) {
       log.info('Started');
     } else {
       const error = 'Cannot start, scheduler is already running';
-      if (_.isFunction(testRunner.logError())){
+      if (self.services && _.isFunction(testRunner.logError())){
         testRunner.logError(error);
       } else {
         log.error(error);
