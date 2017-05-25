@@ -3,7 +3,6 @@ const config  = require('../../config');
 const log     = config.log;
 const moment  = require('moment');
 const decache = require('decache');
-const Slack   = require('node-slack');
 require('moment-duration-format');
 
 const MOMENT_FORMAT = 'dddd, MMMM Do YYYY, h:mm:ss a';
@@ -105,7 +104,7 @@ const TestRunner = function (services) {
     curStatus[update.schedule.name] = update;
 
     if (update.fails > 0) {
-      logError(`Failed test: ${update.schedule.name} \n with results: ${JSON.stringify(update, null, 2)}`);
+      self.logError(`Failed test: ${update.schedule.name} \n with results: ${JSON.stringify(update, null, 2)}`);
     } else {
       log.debug(`Status update for ${update.schedule.name}: `, JSON.stringify(update, null, 2));
     }
@@ -153,7 +152,7 @@ const TestRunner = function (services) {
 
   self.abort = (name) => {
     if (!mochaRunner[name]) {
-      logError(`Cannot abort testing of '${name}', tests not running`);
+      self.logError(`Cannot abort testing of '${name}', tests not running`);
     } else {
       log.info(`Aborted testing for '${name}'`);
       mochaRunner[name].abort();

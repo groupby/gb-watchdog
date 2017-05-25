@@ -11,14 +11,14 @@ const STATUS_RUNNING = 'running';
 
 const Scheduler = function (testRunner) {
   const self = this;
-  let services = null;
+  self.services = null;
 
   if (!_.isObject(testRunner) || !_.isFunction(testRunner.run) || testRunner.run.length < 1) {
     throw new Error(`testRunner must have 'run' function that takes at least one argument`);
   }
 
   if (_.isFunction(testRunner.getServices())){
-    services = testRunner.getServices();
+    self.services = testRunner.getServices();
   }
 
   let allSchedules     = {};
