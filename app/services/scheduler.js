@@ -11,14 +11,9 @@ const STATUS_RUNNING = 'running';
 
 const Scheduler = function (testRunner) {
   const self = this;
-  self.services = null;
 
   if (!_.isObject(testRunner) || !_.isFunction(testRunner.run) || testRunner.run.length < 1) {
     throw new Error(`testRunner must have 'run' function that takes at least one argument`);
-  }
-
-  if (_.isFunction(testRunner.getServices())){
-    self.services = testRunner.getServices();
   }
 
   let allSchedules     = {};
@@ -136,10 +131,9 @@ const Scheduler = function (testRunner) {
       log.info('Started');
     } else {
       const error = 'Cannot start, scheduler is already running';
-      if (self.services && _.isFunction(testRunner.logError())){
-        testRunner.logError(error);
-      } else {
-        log.error(error);
+      log.error(error);
+      if (_.isFunction(testRunner.logSlackError)){
+        testRunner.logSlackError(error);
       }
       throw new Error('Scheduler is already running');
     }

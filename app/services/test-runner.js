@@ -104,7 +104,9 @@ const TestRunner = function (services) {
     curStatus[update.schedule.name] = update;
 
     if (update.fails > 0) {
-      self.logError(`Failed test: ${update.schedule.name} \n with results: ${JSON.stringify(update, null, 2)}`);
+      const error = `Failed test: ${update.schedule.name} \n with results: ${JSON.stringify(update, null, 2)}`;
+      log.error(error);
+     // self.logSlackError(error);
     } else {
       log.debug(`Status update for ${update.schedule.name}: `, JSON.stringify(update, null, 2));
     }
@@ -152,7 +154,9 @@ const TestRunner = function (services) {
 
   self.abort = (name) => {
     if (!mochaRunner[name]) {
-      self.logError(`Cannot abort testing of '${name}', tests not running`);
+      const error = `Cannot abort testing of '${name}', tests not running`;
+      log.error(error);
+      //self.logSlackError(error);
     } else {
       log.info(`Aborted testing for '${name}'`);
       mochaRunner[name].abort();
@@ -168,8 +172,7 @@ const TestRunner = function (services) {
     return services;
   };
 
-  self.logError = (message) => {
-    log.error(message);
+  self.logSlackError = (message) => {
     if (services.slack && services.slackConfig) {
       services.slack.send({
         text:     message,
