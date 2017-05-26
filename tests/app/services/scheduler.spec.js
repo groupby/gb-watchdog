@@ -24,9 +24,6 @@ describe('scheduler service', () => {
       run:   (arg) => {
       },
       abort: () => {
-      },
-      getServices: () => {
-        return null;
       }
     };
     scheduler      = new Scheduler(testRunnerMock);
