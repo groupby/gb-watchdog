@@ -1,38 +1,38 @@
 const _       = require('lodash');
 const config  = require('../../config');
-const log = config.log;
-const moment = require('moment');
-require("moment-duration-format");
+const log     = config.log;
+const moment  = require('moment');
 const decache = require('decache');
+require('moment-duration-format');
 
 const MOMENT_FORMAT = 'dddd, MMMM Do YYYY, h:mm:ss a';
 
 const TestRunner = function (services) {
-  const self      = this;
+  const self        = this;
   const mochaRunner = {};
   const curStatus   = {};
 
-  if (_.isObject(services.slack) && !_.isFunction(services.slack.send)){
+  if (_.isObject(services.slack) && !_.isFunction(services.slack.send)) {
     throw new Error('if provided, slack must have a send function');
   }
 
-  if (_.isObject(services.slack) && !_.isObject(services.slackConfig)){
+  if (_.isObject(services.slack) && !_.isObject(services.slackConfig)) {
     throw new Error('if slack is provided, must have slackConfig');
   }
 
-  if (_.isObject(services.sysdig) && !_.isFunction(services.sysdig.sendEvent)){
+  if (_.isObject(services.sysdig) && !_.isFunction(services.sysdig.sendEvent)) {
     throw new Error('if provided, sysdig must have a sendEvent function');
   }
 
-  if (_.isObject(services.sysdig) && !_.isObject(services.sysdigConfig)){
+  if (_.isObject(services.sysdig) && !_.isObject(services.sysdigConfig)) {
     throw new Error('if sysdig is provided, must have sysdigConfig');
   }
 
-  if (_.isObject(services.history) && !_.isFunction(services.history.addResult)){
+  if (_.isObject(services.history) && !_.isFunction(services.history.addResult)) {
     throw new Error('if provided, history must have a addResult function');
   }
 
-  if (_.isObject(services.blipClient) && !_.isFunction(services.blipClient.write)){
+  if (_.isObject(services.blipClient) && !_.isFunction(services.blipClient.write)) {
     throw new Error('if provided, blipClient must have a write function');
   }
 
@@ -50,7 +50,7 @@ const TestRunner = function (services) {
         text += '\n';
         text += `Start:      ${moment(result.start).format(MOMENT_FORMAT)}\n`;
         text += `End:        ${moment(result.end).format(MOMENT_FORMAT)}\n`;
-        text += `Duration:   ${moment.duration(result.duration).format("d[d] h:mm:ss")}\n`;
+        text += `Duration:   ${moment.duration(result.duration).format('d[d] h:mm:ss')}\n`;
         text += '\n';
         text += `Passes:     ${result.passes}\n`;
         text += `Failures:   ${result.fails}\n`;
@@ -104,7 +104,9 @@ const TestRunner = function (services) {
     curStatus[update.schedule.name] = update;
 
     if (update.fails > 0) {
-      log.error(`Failed test: ${update.schedule.name} \n with results: ${JSON.stringify(update, null, 2)}`);
+      const error = `Failed test: ${update.schedule.name} \n with results: ${JSON.stringify(update, null, 2)}`;
+      log.error(error);
+      self.logSlackError(error);
     } else {
       log.debug(`Status update for ${update.schedule.name}: `, JSON.stringify(update, null, 2));
     }
@@ -112,7 +114,7 @@ const TestRunner = function (services) {
     // If the previous run is complete, remove reference to mochaRunner
     if (update.end !== null) {
       handleFinalResults(update);
-      delete mochaRunner[update.schedule.name]
+      delete mochaRunner[update.schedule.name];
     }
   };
 
@@ -136,7 +138,7 @@ const TestRunner = function (services) {
       mochaRunner[name] = mocha.run();
 
       // Attempt to address mocha memory leaks
-      mochaRunner[name].on('suite end', function(suite) {
+      mochaRunner[name].on('suite end', function (suite) {
         log.debug('deleting mocha suite');
         delete suite.tests;
         delete suite._beforeAll;
@@ -144,15 +146,20 @@ const TestRunner = function (services) {
         delete suite._afterEach;
         delete suite.ctx;
         delete suite._afterAll;
+        delete mochaRunner[name];
       });
     } else {
-      log.warn(`Already running test for schedule '${name}, skipping this run'`);
+      const error = `Already running test for schedule '${name}, skipping this run'`;
+      log.error(error);
+      self.logSlackError(error);
     }
   };
 
-  self.abort = (name)=> {
+  self.abort = (name) => {
     if (!mochaRunner[name]) {
-      log.error(`Cannot abort testing of '${name}', tests not running`);
+      const error = `Cannot abort testing of '${name}', tests not running`;
+      log.error(error);
+      self.logSlackError(error);
     } else {
       log.info(`Aborted testing for '${name}'`);
       mochaRunner[name].abort();
@@ -162,6 +169,16 @@ const TestRunner = function (services) {
 
   self.status = () => {
     return curStatus;
+  };
+
+  self.logSlackError = (message) => {
+    if (services.slack && services.slackConfig) {
+      services.slack.send({
+        text:     message,
+        channel:  services.slackConfig.channel,
+        username: services.slackConfig.username
+      });
+    }
   };
 
   return self;

@@ -38,7 +38,7 @@ describe('test-runner service', () => {
       expect(status['default'].end).to.eql('done');
       expect(status['default'].schedule.name).to.eql('default');
       expect(status['default'].schedule.files).to.eql(['tests/fakeE2ETests/noopTest.js']);
-      testRunner.abort();
+      testRunner.abort('default');
       done();
     };
 
@@ -91,7 +91,7 @@ describe('test-runner service', () => {
 
     const testRunner = new TestRunner({reporter, slack, history});
     testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
-    testRunner.abort();
+    testRunner.abort('default');
   });
 
   it('should report status at end via slack', (done) => {
@@ -102,9 +102,18 @@ describe('test-runner service', () => {
 
     const slack = {
       send: (message) => {
-        expect(message.text).to.match(/noopTest/);
-        testRunner.abort();
-        done();
+        if (message.text.match(/Test Results/) && message.text.match(/noopTest/)) {
+
+          expect(passes).to.eql(1);
+          expect(fails).to.eql(2);
+          expect(end).to.eql(1);
+          expect(status['default'].end).to.exist;
+          expect(status['default'].schedule.name).to.eql('default');
+          expect(status['default'].schedule.files).to.eql(['tests/fakeE2ETests/noopTest.js']);
+
+          testRunner.abort('default');
+          done();
+        }
       }
     };
 
@@ -120,14 +129,7 @@ describe('test-runner service', () => {
           files: ['tests/fakeE2ETests/noopTest.js']
         }
       });
-      expect(passes).to.eql(1);
-      expect(fails).to.eql(2);
-      expect(end).to.eql(1);
 
-      const status = testRunner.status();
-      expect(status['default'].end).to.eql('done');
-      expect(status['default'].schedule.name).to.eql('default');
-      expect(status['default'].schedule.files).to.eql(['tests/fakeE2ETests/noopTest.js']);
     };
 
     const reporter = function (mochaRunner, mochaOptions) {
@@ -153,6 +155,8 @@ describe('test-runner service', () => {
         channel:  'channel'
       }
     });
+
+    const status = testRunner.status();
     testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
   });
 
@@ -165,9 +169,9 @@ describe('test-runner service', () => {
     const sysdigConfig = {
       apiKey: 'token',
       alert:  {
-        namespace:   'namespace',
-        severity:    'severity',
-        tags:        {
+        namespace: 'namespace',
+        severity:  'severity',
+        tags:      {
           'tagOne': 'one'
         }
       }
@@ -182,7 +186,7 @@ describe('test-runner service', () => {
         expect(tags).to.eql(Object.assign({}, sysdigConfig.alert.tags, {
           testName: 'defaultTest'
         }));
-        testRunner.abort();
+        testRunner.abort('default');
         done();
       }
     };
@@ -204,7 +208,7 @@ describe('test-runner service', () => {
       expect(passes).to.eql(1);
       expect(fails).to.eql(2);
       expect(end).to.eql(1);
-      
+
       const status = testRunner.status();
       expect(status['default'].end).to.eql(timeValue);
       expect(status['default'].schedule.name).to.eql('default');
@@ -295,4 +299,75 @@ describe('test-runner service', () => {
     const testRunner = new TestRunner({reporter, slack: null, slackConfig: null, history: mockHistory});
     testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
   });
+
+  it('should recover if test explodes', (done) => {
+    let options = null;
+
+    const Slack = function () {
+      const self       = this;
+      self.numMessages = 0;
+      self.send        = (message) => {
+        if (message.text.match(/Test Results/) && message.text.match(/explodingTest/)) {
+          self.numMessages++;
+          if (self.numMessages === 1) {
+            testRunner.run('default', ['tests/fakeE2ETests/explodingTest.js']);
+          } else {
+            done();
+          }
+        }
+      }
+    };
+    const slack = new Slack();
+
+    const complete = () => {
+      options.reporterOptions.statusCallback({
+        start:    moment().subtract(1, 'day').toISOString(),
+        duration: 10,
+        end:      moment().toISOString(),
+        fails:    1,
+        tests:    [],
+        schedule: {
+          name:  'default',
+          files: ['tests/fakeE2ETests/explodingTest.js']
+        }
+      });
+
+    };
+
+    const reporter = function (mochaRunner, mochaOptions) {
+      options = mochaOptions;
+      mochaRunner.on('end', () => complete());
+      return this;
+    };
+
+    const testRunner = new TestRunner({
+      reporter, slack, slackConfig: {
+        username: 'user',
+        channel:  'channel'
+      }
+    });
+
+    testRunner.run('default', ['tests/fakeE2ETests/explodingTest.js']);
+  });
+
+  it('should send error through slack', (done) =>{
+    const slackConfig = {
+      channel: 'testChannel',
+      username: 'testUser'
+    };
+    const services = {
+      slack: {
+        send: (params) => {
+          expect(params.text).to.eql('test message');
+          expect(params.channel).to.eql(slackConfig.channel);
+          expect(params.username).to.eql(slackConfig.username);
+          done();
+        }
+      },
+      slackConfig
+    };
+    const testRunner = new TestRunner(services);
+    testRunner.logSlackError('test message');
+  });
+
 });

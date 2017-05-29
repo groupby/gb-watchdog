@@ -66,6 +66,7 @@ gulp.task('test', ['test:lint'], () => {
 
 gulp.task('coveralls', ['test:lint'], () => {
   if (!process.env.CI) {
+    process.exit(1);
     return;
   }
 
