@@ -38,7 +38,7 @@ describe('test-runner service', () => {
       expect(status['default'].end).to.eql('done');
       expect(status['default'].schedule.name).to.eql('default');
       expect(status['default'].schedule.files).to.eql(['tests/fakeE2ETests/noopTest.js']);
-      testRunner.abort();
+      testRunner.abort('default');
       done();
     };
 
@@ -91,7 +91,7 @@ describe('test-runner service', () => {
 
     const testRunner = new TestRunner({reporter, slack, history});
     testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
-    testRunner.abort();
+    testRunner.abort('default');
   });
 
   it('should report status at end via slack', (done) => {
@@ -186,7 +186,7 @@ describe('test-runner service', () => {
         expect(tags).to.eql(Object.assign({}, sysdigConfig.alert.tags, {
           testName: 'defaultTest'
         }));
-        testRunner.abort();
+        testRunner.abort('default');
         done();
       }
     };
