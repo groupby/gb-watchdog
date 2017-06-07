@@ -14,15 +14,8 @@ chai.use(chaiAsPromised);
 describe('history service', () => {
   const INDEX = 'watchdog_testing';
 
-  // const esConfig = testConfig.elasticsearch;
-  const esConfig = {
-    host:        'es-new:9200',
-    apiVersion:  '2.2',
-    logLevel:    'debug',
-    indexSuffix: 'testing'
-  };
+  const esConfig = testConfig.elasticsearch;
 
-  // const client = elasticsearch.createClient(esConfig.host, esConfig.port, esConfig.apiVersion);
   const client = elasticsearch.createClient(esConfig.host, esConfig.apiVersion);
 
   beforeEach(() => {

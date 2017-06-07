@@ -1,2 +1,2 @@
-ES_HOST=es-new
-ES_PORT=9200
+export ES_HOST=es-new
+export ES_PORT=9200
