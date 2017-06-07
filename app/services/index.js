@@ -14,6 +14,7 @@ module.exports = function (config) {
   const blipClient = (config.blipServer) ? BlipClient.createClient(config.blipServer.host, config.blipServer.port, config.blipServer.serviceName, config.blipServer.environment) : null;
 
   const esClient = (config.elasticsearch) ? elasticsearch.createClient(config.elasticsearch.host, config.elasticsearch.apiVersion) : null;
+  // const esClient = (config.elasticsearch) ? elasticsearch.createClient('es-new', '9200', config.elasticsearch.apiVersion) : null;
 
   const history = new History(esClient, config.elasticsearch && config.elasticsearch.indexSuffix);
   const slack   = config.slack ? new Slack(config.slack.url) : null;

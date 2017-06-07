@@ -56,10 +56,12 @@ module.exports = function (logLevel) {
   /**
    * Create new elasticsearch client
    * @param host
+   * @param port
    * @param apiVersion
    * @returns {*}
    */
   self.createClient = (host, apiVersion) => {
+    // const address = host + ':' + port;
     if (!_.isString(host)) {
       throw new Error('host must be a string');
     }

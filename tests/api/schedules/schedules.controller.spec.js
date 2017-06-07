@@ -5,6 +5,9 @@ const expect         = chai.expect;
 const request        = require('supertest-as-promised');
 const Watchdog       = require('../../../index');
 
+const config = require('../../../config');
+const log    = config.log;
+
 chai.use(chaiAsPromised);
 
 describe('schedules api', ()=> {
@@ -19,8 +22,9 @@ describe('schedules api', ()=> {
 
     try {
       watchdog.services.scheduler.stop();
+      watchdog.stop();
     } catch (ex) {
-      // Do nothing
+      log.error('Could not stop watchdog for some reason. This is probably bad.');
     }
   });
 

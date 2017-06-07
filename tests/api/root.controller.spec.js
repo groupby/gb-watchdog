@@ -6,6 +6,8 @@ const moment         = require('moment');
 const request        = require('supertest-as-promised');
 const Watchdog       = require('../../index');
 
+const config = require('../../config');
+const log    = config.log;
 chai.use(chaiAsPromised);
 
 describe('root api', ()=> {
@@ -20,21 +22,27 @@ describe('root api', ()=> {
       });
   });
 
-  it('should return status of services', (done) => {
-    request(watchdog).get('/status')
+  afterEach(() => {
+    watchdog.services.scheduler.deleteAll();
+    try {
+      watchdog.stop();
+    } catch (ex) {
+      log.error('Could not stop watchdog for some reason. This is probably bad.');
+    }
+  });
+
+  it('should return status of services', () => {
+    return request(watchdog).get('/status')
       .set('Content-Type', 'application/json')
       .expect(200)
       .then((res)=> {
         expect(res.body.testRunner).to.eql({});
         expect(res.body.scheduler.state).to.eql('stopped');
         expect(res.body.scheduler.schedules).to.eql({});
-      })
-      .then(()=> {
-        done();
-      }).catch(done);
+      });
   });
 
-  it('should return status of scheduled services', (done) => {
+  it('should return status of scheduled services', () => {
     watchdog.services.scheduler.start();
 
     const schedule = {
@@ -57,10 +65,7 @@ describe('root api', ()=> {
           expect(res.body.testRunner.default.total).to.eql(3);
           expect(res.body.scheduler.state).to.eql('running');
           expect(moment(res.body.scheduler.schedules.default.prevRun).valueOf()).to.be.below(moment().valueOf());
-        })
-        .then(()=> {
-          done();
-        }).catch(done);
+        });
     }, 1100);
   });
 });
@@ -80,32 +85,32 @@ describe('protected root api', ()=> {
       });
   });
 
-  it('should return status of services when providing api key', (done) => {
-    request(watchdog).get('/status')
+  afterEach(() => {
+    watchdog.services.scheduler.deleteAll();
+    try {
+      watchdog.stop();
+    } catch (ex) {
+      log.error('Could not stop watchdog for some reason. This is probably bad.');
+    }
+  });
+
+  it('should return status of services when providing api key', () => {
+    return request(watchdog).get('/status')
       .set('Content-Type', 'application/json')
       .set('api_key', 'somereallygoodapikey')
-      .expect(200)
-      .then(()=> {
-        done();
-      }).catch(done);
+      .expect(200);
   });
 
-  it('should NOT return status of services when NOT providing api key', (done) => {
-    request(watchdog).get('/status')
+  it('should NOT return status of services when NOT providing api key', () => {
+    return request(watchdog).get('/status')
       .set('Content-Type', 'application/json')
-      .expect(400)
-      .then(()=> {
-        done();
-      }).catch(done);
+      .expect(400);
   });
 
-  it('should NOT return status of services when providing incorrect api key', (done) => {
-    request(watchdog).get('/status')
+  it('should NOT return status of services when providing incorrect api key', () => {
+    return request(watchdog).get('/status')
       .set('Content-Type', 'application/json')
       .set('api_key', 'incorrectkey')
-      .expect(401)
-      .then(()=> {
-        done();
-      }).catch(done);
+      .expect(401);
   });
 });

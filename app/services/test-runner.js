@@ -151,6 +151,7 @@ const TestRunner = function (services) {
     } else {
       const error = `Already running test for schedule '${name}, skipping this run'`;
       log.error(error);
+      log.info('running this');
       self.logSlackError(error);
     }
   };
