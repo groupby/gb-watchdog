@@ -9,6 +9,7 @@ const moment         = require('moment');
 const config    = require('../../../config');
 const Schedule  = require('../../../app/models/schedule');
 const Scheduler = require('../../../app/services/scheduler');
+const log    = config.log;
 
 chai.use(chaiAsPromised);
 
@@ -33,6 +34,7 @@ describe('scheduler service', () => {
     try {
       scheduler.stop();
     } catch (ex) {
+      log.error('probably bad');
       // Do nothing
     }
   });
@@ -72,6 +74,7 @@ describe('scheduler service', () => {
     expect(_.size(schedules)).to.eql(0);
 
     scheduler.start();
+    scheduler.update();
 
     const schedule = new Schedule('run tests/fakeE2ETests/fakeTest.js every 2 hours except on saturday, sunday');
     scheduler.add('default', schedule);
