@@ -92,6 +92,10 @@ const SCHEMA = {
         username: {
           type:      'string',
           minLength: 1
+        },
+        verbose: {
+          type: 'boolean',
+          def: true
         }
       }
     },
