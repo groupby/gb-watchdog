@@ -442,7 +442,6 @@ describe('test-runner service', () => {
 
     const slack = {
       send: (message) => {
-        console.log(message.text);
         if (message.text.match(/Some test failure/) ) {
 
           expect(message.text).to.match(/noop test 2/);
