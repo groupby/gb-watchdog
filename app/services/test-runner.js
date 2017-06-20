@@ -112,8 +112,8 @@ const TestRunner = function (services) {
 
     if (update.fails > 0) {
       const error = `Failed test: ${update.schedule.name} \n with results: ${JSON.stringify(update, null, 2)}`;
-      log.error(error);
-      // self.logSlackError(error);
+      log.info(error);
+      self.logSlackError(error);
     } else {
       log.debug(`Status update for ${update.schedule.name}: `, JSON.stringify(update, null, 2));
     }
