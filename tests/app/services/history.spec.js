@@ -1,14 +1,11 @@
 /*eslint no-invalid-this: "off"*/
 const chai           = require('chai');
-const chaiAsPromised = require('chai-as-promised');
 const expect         = chai.expect;
 const moment         = require('moment');
 const elasticsearch  = require('../../../config/elasticsearch')('info');
 const _ = require('lodash');
 
 const History = require('../../../app/services/history');
-
-chai.use(chaiAsPromised);
 
 describe('history service', ()=> {
   const INDEX  = 'watchdog_testing';
@@ -187,7 +184,7 @@ describe('history service', ()=> {
       expect(response.hits.hits.length).to.eql(1);
       expect(response.hits.hits[0]._source).to.eql(result);
     });
-  });
+  }).timeout(5000);
 
   it('should clear results from elasticsearch', () => {
     const history = new History(client, 'testing');
@@ -226,5 +223,5 @@ describe('history service', ()=> {
         expect(results.length).to.eql(0);
       });
     });
-  });
+  }).timeout(5000);
 });

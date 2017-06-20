@@ -7,6 +7,7 @@ dependencies:
   pre:
     - sudo service elasticsearch stop
   override:
+    - npm install -g npm
     - npm install
   post:
     - docker run -d --name es -p 9200:9200 elasticsearch:2.3
