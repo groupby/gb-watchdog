@@ -43,28 +43,35 @@ const TestRunner = function (services) {
       if (result.fails > 0) {
 
         let text = '\n';
-        text += 'Test Results\n';
-        text += '\n';
-        text += `Schedule:   ${result.schedule.name}\n`;
-        text += `Files:      ${result.schedule.files}\n`;
-        text += '\n';
-        text += `Start:      ${moment(result.start).format(MOMENT_FORMAT)}\n`;
-        text += `End:        ${moment(result.end).format(MOMENT_FORMAT)}\n`;
-        text += `Duration:   ${moment.duration(result.duration).format('d[d] h:mm:ss')}\n`;
-        text += '\n';
-        text += `Passes:     ${result.passes}\n`;
-        text += `Failures:   ${result.fails}\n`;
-        text += `Incomplete: ${result.incomplete}`;
-        text += '\n\n';
-        text += 'Errors:';
-        result.tests.forEach((test) => {
-          if (test.error) {
-            text += '\n\n';
-            text += `Test:    ${test.name}\n`;
-            text += `Msg:     ${test.error}\n`;
-            text += `Stack:   ${test.stack}`;
-          }
-        });
+
+        if (services.slackConfig.verbose === true) {
+
+          text += 'Test Results\n';
+          text += '\n';
+          text += `Schedule:   ${result.schedule.name}\n`;
+          text += `Files:      ${result.schedule.files}\n`;
+          text += '\n';
+          text += `Start:      ${moment(result.start).format(MOMENT_FORMAT)}\n`;
+          text += `End:        ${moment(result.end).format(MOMENT_FORMAT)}\n`;
+          text += `Duration:   ${moment.duration(result.duration).format('d[d] h:mm:ss')}\n`;
+          text += '\n';
+          text += `Passes:     ${result.passes}\n`;
+          text += `Failures:   ${result.fails}\n`;
+          text += `Incomplete: ${result.incomplete}`;
+          text += '\n\n';
+          text += 'Errors:';
+          result.tests.forEach((test) => {
+            if (test.error) {
+              text += '\n\n';
+              text += `Test:    ${test.name}\n`;
+              text += `Msg:     ${test.error}\n`;
+              text += `Stack:   ${test.stack}`;
+            }
+          });
+
+        } else {
+          text += 'Some test failures:\n' + result.tests.map(test => `\tname:    ${test.name}`).join('\n');
+        }
 
         services.slack.send({
           text:     text,
@@ -105,7 +112,7 @@ const TestRunner = function (services) {
 
     if (update.fails > 0) {
       const error = `Failed test: ${update.schedule.name} \n with results: ${JSON.stringify(update, null, 2)}`;
-      log.error(error);
+      log.info(error);
       self.logSlackError(error);
     } else {
       log.debug(`Status update for ${update.schedule.name}: `, JSON.stringify(update, null, 2));
