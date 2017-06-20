@@ -74,7 +74,7 @@ describe('schedule model', ()=> {
     expect(schedule.exceptions[0]).to.eql(params.exceptions[0]);
     expect(schedule.files.length).to.eql(1);
     expect(schedule.files[0]).to.eql(params.files[0]);
-    expect(schedule.ignored).to.not.be.defined;
+    expect(schedule.ignored).to.be.undefined;
   });
 
   it('should reject invalid object input', ()=> {

@@ -50,7 +50,7 @@ describe('reporter service', ()=> {
     expect(statusSent.fails).to.eql(0);
     expect(statusSent.incomplete).to.eql(9);
     expect(statusSent.duration).to.eql(0);
-    expect(statusSent.start).to.be.defined;
+    expect(statusSent.start).to.not.be.undefined;
     expect(statusSent.end).to.be.null;
     expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
     expect(statusSent.tests.length).to.eql(1);
@@ -67,7 +67,7 @@ describe('reporter service', ()=> {
     expect(statusSent.fails).to.eql(0);
     expect(statusSent.incomplete).to.eql(8);
     expect(statusSent.duration).to.eql(0);
-    expect(statusSent.start).to.be.defined;
+    expect(statusSent.start).to.not.be.undefined;
     expect(statusSent.end).to.be.null;
     expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
     expect(statusSent.tests.length).to.eql(2);
@@ -84,7 +84,7 @@ describe('reporter service', ()=> {
     expect(statusSent.fails).to.eql(0);
     expect(statusSent.incomplete).to.eql(7);
     expect(statusSent.duration).to.eql(0);
-    expect(statusSent.start).to.be.defined;
+    expect(statusSent.start).to.not.be.undefined;
     expect(statusSent.end).to.be.null;
     expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
     expect(statusSent.tests.length).to.eql(3);
@@ -106,7 +106,7 @@ describe('reporter service', ()=> {
     expect(statusSent.fails).to.eql(1);
     expect(statusSent.incomplete).to.eql(6);
     expect(statusSent.duration).to.eql(0);
-    expect(statusSent.start).to.be.defined;
+    expect(statusSent.start).to.not.be.undefined;
     expect(statusSent.end).to.be.null;
     expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
     expect(statusSent.tests.length).to.eql(4);
@@ -124,8 +124,8 @@ describe('reporter service', ()=> {
       expect(statusSent.fails).to.eql(1);
       expect(statusSent.incomplete).to.eql(6);
       expect(statusSent.duration).to.not.eql(0);
-      expect(statusSent.start).to.be.defined;
-      expect(statusSent.end).to.be.defined;
+      expect(statusSent.start).to.not.be.undefined;
+      expect(statusSent.end).to.not.be.undefined;
       expect(statusSent.schedule).to.eql(options.reporterOptions.schedule);
       expect(statusSent.tests.length).to.eql(4);
       done();

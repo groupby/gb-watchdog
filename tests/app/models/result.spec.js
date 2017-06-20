@@ -38,7 +38,7 @@ describe('result model', ()=> {
     expect(result.passes).to.eql(params.passes);
     expect(result.fails).to.eql(params.fails);
     expect(result.tests).to.eql(params.tests);
-    expect(result.ignoredParam).to.not.be.defined;
+    expect(result.ignoredParam).to.be.undefined;
   });
 
   it('should reject invalid input', ()=> {

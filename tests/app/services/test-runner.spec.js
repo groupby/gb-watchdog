@@ -1,6 +1,5 @@
 /*eslint no-invalid-this: "off" */
 const chai           = require('chai');
-const chaiAsPromised = require('chai-as-promised');
 const expect         = chai.expect;
 const moment         = require('moment');
 
@@ -10,8 +9,6 @@ const log    = config.log;
 log.level('debug');
 
 const TestRunner = require('../../../app/services/test-runner');
-
-chai.use(chaiAsPromised);
 
 describe('test-runner service', () => {
   it('should run tests', (done) => {
@@ -445,6 +442,7 @@ describe('test-runner service', () => {
 
     const slack = {
       send: (message) => {
+        console.log(message.text);
         if (message.text.match(/Some test failure/) ) {
 
           expect(message.text).to.match(/noop test 2/);

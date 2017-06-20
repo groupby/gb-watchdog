@@ -45,7 +45,7 @@ describe('schedules api', ()=> {
           .set('Content-Type', 'application/json')
           .expect(200)
           .then((res)=> {
-            expect(res.body.runthistest).to.be.defined;
+            expect(res.body.runthistest).to.not.be.undefined;
             expect(res.body.runthistest.files).to.eql(['tests/fakeE2ETests/fakeTest.js']);
             done();
           }).catch(done);

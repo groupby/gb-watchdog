@@ -5,6 +5,7 @@ const ISO_86001_REGEX = /(\d{4})-(0[1-9]|1[0-2]|[1-9])-(\3([12]\d|0[1-9]|3[01])|
 
 const SCHEMA = {
   type:       'object',
+  strict: true,
   properties: {
     start:    {
       type:    'string',
