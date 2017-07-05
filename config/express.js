@@ -6,7 +6,7 @@ const errorHandler   = require('errorhandler');
 const cors           = require('cors');
 const expressLogger  = require('express-bunyan-logger');
 const PrettyStream   = require('bunyan-prettystream');
-const prettyStdOut   = new PrettyStream({mode: 'dev'});
+const prettyStdOut   = new PrettyStream({mode: 'dev', useColor: false});
 prettyStdOut.pipe(process.stdout);
 
 module.exports = function (app, config) {

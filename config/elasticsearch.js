@@ -5,7 +5,7 @@ const bunyan        = require('bunyan');
 const hash          = require('object-hash');
 const HTTPStatus    = require('http-status');
 const PrettyStream  = require('bunyan-prettystream');
-const prettyStdOut  = new PrettyStream({mode: 'dev'});
+const prettyStdOut  = new PrettyStream({mode: 'dev', useColor: false});
 prettyStdOut.pipe(process.stdout);
 
 const log = require('./index').log;
