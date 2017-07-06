@@ -1,7 +1,7 @@
 /*eslint no-invalid-this: "off" */
-const chai           = require('chai');
-const expect         = chai.expect;
-const moment         = require('moment');
+const chai   = require('chai');
+const expect = chai.expect;
+const moment = require('moment');
 
 const config = require('../../../config');
 const log    = config.log;
@@ -150,7 +150,7 @@ describe('test-runner service', () => {
       reporter, slack, slackConfig: {
         username: 'user',
         channel:  'channel',
-        verbose: true
+        verbose:  true
       }
     });
 
@@ -342,7 +342,7 @@ describe('test-runner service', () => {
       reporter, slack, slackConfig: {
         username: 'user',
         channel:  'channel',
-        verbose: true
+        verbose:  true
       }
     });
 
@@ -353,7 +353,7 @@ describe('test-runner service', () => {
     const slackConfig = {
       channel:  'testChannel',
       username: 'testUser',
-      verbose: true
+      verbose:  true
     };
     const services    = {
       slack: {
@@ -429,7 +429,7 @@ describe('test-runner service', () => {
       reporter, slack, slackConfig: {
         username: 'user',
         channel:  'channel',
-        verbose: true
+        verbose:  true
       }
     });
 
@@ -442,7 +442,7 @@ describe('test-runner service', () => {
 
     const slack = {
       send: (message) => {
-        if (message.text.match(/Some test failure/) ) {
+        if (message.text.match(/Some test failure/)) {
 
           expect(message.text).to.match(/noop test 2/);
           expect(message.text).to.match(/noop test 3/);
@@ -459,7 +459,7 @@ describe('test-runner service', () => {
         duration: 10,
         end:      moment().toISOString(),
         fails:    10,
-        tests:    [{name: 'noop test 1'},{name: 'noop test 2'},{name: 'noop test 3'},],
+        tests:    [{name: 'noop test 1'}, {name: 'noop test 2'}, {name: 'noop test 3'},],
         schedule: {
           name:  'default',
           files: ['tests/fakeE2ETests/noopTest.js']
@@ -486,11 +486,82 @@ describe('test-runner service', () => {
       reporter, slack, slackConfig: {
         username: 'user',
         channel:  'channel',
-        verbose: false
+        verbose:  false
       }
     });
 
     testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
   });
+
+  it.only('should print only failed tests when suite fails', (done) => {
+    let passes  = 0;
+    let fails   = 0;
+    let end     = 0;
+    let options = null;
+
+    const slack = {
+      send: (message) => {
+        if (message.text.match(/Some test failures/)) {
+          expect(passes).to.eql(3);
+          expect(fails).to.eql(1);
+          expect(end).to.eql(1);
+
+          expect(message.text).contains('novica');
+          expect(message.text).not.contains('systemax');
+          expect(message.text).not.contains('anthropologie');
+          expect(message.text).not.contains('austinkayak');
+
+          done();
+        }
+
+      }
+    };
+
+    const complete = () => {
+      options.reporterOptions.statusCallback({
+        start:    moment().subtract(1, 'day').toISOString(),
+        duration: 10,
+        end:      moment().toISOString(),
+        fails:    10,
+        tests:    [{name: 'anthropologie assert test'},
+          {name: 'systemax assert test'},
+          {name: 'novica assert test', 'duration': 565, 'error': 'expected 0 to be above 1'},
+          {name: 'austinkayak assert test'}],
+        schedule: {
+          name:  'default',
+          files: ['tests/fakeE2ETests/onlyOneTestFails.js']
+        }
+      });
+
+    };
+
+    const reporter = function (mochaRunner, mochaOptions) {
+      options = mochaOptions;
+
+      mochaRunner.on('pass', () => {
+        passes++;
+      });
+      mochaRunner.on('fail', () => {
+        fails++;
+      });
+      mochaRunner.on('end', () => {
+        end++;
+        complete();
+      });
+
+      return this;
+    };
+
+    const testRunner = new TestRunner({
+      reporter, slack, slackConfig: {
+        username: 'user',
+        channel:  'channel',
+        verbose:  false
+      }
+    });
+
+    const status = testRunner.status();
+    testRunner.run('default', ['tests/fakeE2ETests/onlyOneTestFails.js']);
+  }).timeout(10000);
 
 });

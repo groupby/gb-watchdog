@@ -54,6 +54,7 @@ describe('root api', ()=> {
         .set('Content-Type', 'application/json')
         .expect(200)
         .then((res)=> {
+          // console.log(JSON.stringify(res.body.testRunner.default));
           expect(res.body.testRunner.default.total).to.eql(3);
           expect(res.body.scheduler.state).to.eql('running');
           expect(moment(res.body.scheduler.schedules.default.prevRun).valueOf()).to.be.below(moment().valueOf());
