@@ -9,7 +9,7 @@ const keyObject = {
 };
 
 _.forEach(keyObject, (value, customerId) => {
-  describe(`${customerId} `, function () {
+  describe(`${customerId}`, function () {
     this.timeout(20000);
       it('assert test', () => {
           if(customerId === "novica") {

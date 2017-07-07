@@ -493,7 +493,7 @@ describe('test-runner service', () => {
     testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
   });
 
-  it.only('should print only failed tests when suite fails', (done) => {
+  it('should print only failed tests when suite fails', (done) => {
     let passes  = 0;
     let fails   = 0;
     let end     = 0;
