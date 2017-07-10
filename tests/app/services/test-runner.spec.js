@@ -559,7 +559,6 @@ describe('test-runner service', () => {
       }
     });
 
-    const status = testRunner.status();
     testRunner.run('default', ['tests/fakeE2ETests/onlyOneTestFails.js']);
   }).timeout(10000);
 
