@@ -443,6 +443,7 @@ describe('test-runner service', () => {
     const slack = {
       send: (message) => {
         if (message.text.match(/Some test failure/)) {
+          console.log(JSON.stringify(message));
 
           expect(message.text).to.match(/noop test 2/);
           expect(message.text).to.match(/noop test 3/);
@@ -459,7 +460,7 @@ describe('test-runner service', () => {
         duration: 10,
         end:      moment().toISOString(),
         fails:    10,
-        tests:    [{name: 'noop test 1'}, {name: 'noop test 2'}, {name: 'noop test 3'},],
+        tests:    [{name: 'noop test 1'}, {name: 'noop test 2', 'error': 'some error'}, {name: 'noop test 3', 'error': 'some error'},],
         schedule: {
           name:  'default',
           files: ['tests/fakeE2ETests/noopTest.js']
@@ -525,7 +526,7 @@ describe('test-runner service', () => {
         fails:    10,
         tests:    [{name: 'anthropologie assert test'},
           {name: 'systemax assert test'},
-          {name: 'novica assert test', 'duration': 565, 'error': 'expected 0 to be above 1'},
+          {name: 'novica assert test', 'duration': 565, 'error': 'some error'},
           {name: 'austinkayak assert test'}],
         schedule: {
           name:  'default',
