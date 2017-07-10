@@ -48,7 +48,7 @@ const TestRunner = function (services) {
     if (services.slack) {
       if (result.fails > 0) {
 
-        let text       = '\n';
+        let text        = '\n';
         let detailsText = '\n';
 
         if (services.slackConfig.verbose === true) {
@@ -83,10 +83,11 @@ const TestRunner = function (services) {
             const reference = randomString(5, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
             text += `\tname:    ${test.name}  reference: ${reference}\n`;
 
-            if (_.isString(test.error) && test.error.match(/Non-200 status returned/)) {
+            if (_.isString(test.error) && test.error.match(/Test failed due to:/)) {
               detailsText += `Reference: ${reference}\n\tDetails:    ${test.error}\n`
             }
           })
+
         }
 
         services.slack.send({
@@ -95,7 +96,7 @@ const TestRunner = function (services) {
           username: services.slackConfig.username
         });
 
-        if (detailsText.match(/Test failed due to:/) && services.slackConfig.detailsChannel){
+        if (detailsText.match(/Test failed due to:/) && services.slackConfig.detailsChannel) {
           services.slack.send({
             text:     detailsText,
             channel:  services.slackConfig.detailsChannel,
