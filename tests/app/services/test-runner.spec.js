@@ -443,8 +443,6 @@ describe('test-runner service', () => {
     const slack = {
       send: (message) => {
         if (message.text.match(/Some test failure/)) {
-          console.log(JSON.stringify(message));
-
           expect(message.text).to.match(/noop test 2/);
           expect(message.text).to.match(/noop test 3/);
           done();
