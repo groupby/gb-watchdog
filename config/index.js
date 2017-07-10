@@ -89,6 +89,11 @@ const SCHEMA = {
           type:    'string',
           pattern: /^#.+/
         },
+        detailsChannel:  {
+          type:    'string',
+          pattern: /^#.+/,
+          optional: true
+        },
         username: {
           type:      'string',
           minLength: 1

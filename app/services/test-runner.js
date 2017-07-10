@@ -7,6 +7,12 @@ require('moment-duration-format');
 
 const MOMENT_FORMAT = 'dddd, MMMM Do YYYY, h:mm:ss a';
 
+const randomString = (length, chars) => {
+  let result = '';
+  for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+};
+
 const TestRunner = function (services) {
   const self        = this;
   const mochaRunner = {};
@@ -42,7 +48,8 @@ const TestRunner = function (services) {
     if (services.slack) {
       if (result.fails > 0) {
 
-        let text = '\n';
+        let text       = '\n';
+        let detailsText = '\n';
 
         if (services.slackConfig.verbose === true) {
 
@@ -71,7 +78,15 @@ const TestRunner = function (services) {
 
         } else {
           const failedTests = _.filter(result.tests, (test) => _.has(test, 'error'));
-          text += 'Some test failures:\n' + failedTests.map(test => `\tname:    ${test.name}`).join('\n');
+          text += 'Some test failures:\n';
+          failedTests.forEach((test) => {
+            const reference = randomString(5, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+            text += `\tname:    ${test.name}  reference: ${reference}\n`;
+
+            if (_.isString(test.error) && test.error.match(/Non-200 status returned/)) {
+              detailsText += `Reference: ${reference}\n\tDetails:    ${test.error}\n`
+            }
+          })
         }
 
         services.slack.send({
@@ -79,6 +94,14 @@ const TestRunner = function (services) {
           channel:  services.slackConfig.channel,
           username: services.slackConfig.username
         });
+
+        if (detailsText.match(/Test failed due to:/) && services.slackConfig.detailsChannel){
+          services.slack.send({
+            text:     detailsText,
+            channel:  services.slackConfig.detailsChannel,
+            username: services.slackConfig.username
+          });
+        }
       }
     }
 
