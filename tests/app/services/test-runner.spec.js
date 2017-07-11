@@ -160,7 +160,7 @@ describe('test-runner service', () => {
 
   it('should report details to detail channel', (done) => {
     const reporter = require('../../../app/services/reporter');
-    const slack = {
+    const slack    = {
       send: (message) => {
         if (message.text.match(/Reference/) && message.text.match(/Details/)) {
           expect(message.text).to.match(/Details:    Test failed due to: being a bad test/);

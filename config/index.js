@@ -81,24 +81,24 @@ const SCHEMA = {
       optional:   true,
       type:       'object',
       properties: {
-        url:      {
+        url:            {
           type:    'string',
           pattern: 'url'
         },
-        channel:  {
+        channel:        {
           type:    'string',
           pattern: /^#.+/
         },
-        detailsChannel:  {
-          type:    'string',
-          pattern: /^#.+/,
+        detailsChannel: {
+          type:     'string',
+          pattern:  /^#.+/,
           optional: true
         },
-        username: {
+        username:       {
           type:      'string',
           minLength: 1
         },
-        verbose:  {
+        verbose:        {
           type: 'boolean',
           def:  true
         }

@@ -84,9 +84,9 @@ const TestRunner = function (services) {
             text += `\tname:    ${test.name}  reference: ${reference}\n`;
 
             if (_.isString(test.error) && test.error.match(/test failed due to:/i)) {
-              detailsText += `Reference: ${reference}\n\tDetails:    ${test.error}\n`
+              detailsText += `Reference: ${reference}\n\tDetails:    ${test.error}\n`;
             }
-          })
+          });
 
         }
 
