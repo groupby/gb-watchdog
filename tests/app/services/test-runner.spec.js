@@ -458,7 +458,7 @@ describe('test-runner service', () => {
         duration: 10,
         end:      moment().toISOString(),
         fails:    10,
-        tests:    [{name: 'noop test 1'}, {name: 'noop test 2', 'error': 'some error'}, {name: 'noop test 3', 'error': 'some error'},],
+        tests:    [{name: 'noop test 1'}, {name: 'noop test 2', error: 'some error'}, {name: 'noop test 3', 'error': 'some error'},],
         schedule: {
           name:  'default',
           files: ['tests/fakeE2ETests/noopTest.js']
@@ -524,7 +524,7 @@ describe('test-runner service', () => {
         fails:    10,
         tests:    [{name: 'anthropologie assert test'},
           {name: 'systemax assert test'},
-          {name: 'novica assert test', 'duration': 565, 'error': 'some error'},
+          {name: 'novica assert test', 'duration': 565, error: 'some error'},
           {name: 'austinkayak assert test'}],
         schedule: {
           name:  'default',

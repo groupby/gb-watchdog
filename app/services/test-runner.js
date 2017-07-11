@@ -70,9 +70,8 @@ const TestRunner = function (services) {
           });
 
         } else {
-          text += 'Some test failures:\n' + result.tests.filter(test => {
-                return _.has(test, "error");
-              }).map(test => `\tname:    ${test.name}`).join('\n');
+          text += 'Some test failures:\n' + result.tests.filter(test => _.has(test, "error"))
+              .map(test => `\tname:    ${test.name}`).join('\n');
         }
 
         services.slack.send({
