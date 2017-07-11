@@ -7,8 +7,8 @@ const Schedule = require('../../../app/models/schedule');
 
 chai.use(chaiAsPromised);
 
-describe('schedule model', ()=> {
-  it('should accept valid string input', ()=> {
+describe('schedule model', () => {
+  it('should accept valid string input', () => {
     const schedule = new Schedule('run tests/fakeE2ETests/fakeTest.js,tests/fakeE2ETests/fakeTest2.js every 12 hours');
     expect(schedule.files).to.include('tests/fakeE2ETests/fakeTest.js');
     expect(schedule.files).to.include('tests/fakeE2ETests/fakeTest2.js');
@@ -19,9 +19,9 @@ describe('schedule model', ()=> {
     ]);
   });
 
-  it('should not accept invalid string input', ()=> {
+  it('should not accept invalid string input', () => {
     let scheduleString = 'run missingFile.js every 12 hours';
-    const throws       = ()=> {
+    const throws       = () => {
       new Schedule(scheduleString);
     };
     expect(throws).to.throw(/file: missingFile\.js not found/);
@@ -45,7 +45,7 @@ describe('schedule model', ()=> {
     expect(throws).to.throw(/error while parsing/);
   });
 
-  it('should accept valid object input', ()=> {
+  it('should accept valid object input', () => {
     const params = {
       schedules:  [
         {
@@ -77,7 +77,7 @@ describe('schedule model', ()=> {
     expect(schedule.ignored).to.be.undefined;
   });
 
-  it('should reject invalid object input', ()=> {
+  it('should reject invalid object input', () => {
     let params = {
       schedules:  'doesnt accept strings',
       exceptions: [

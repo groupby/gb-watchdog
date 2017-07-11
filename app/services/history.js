@@ -3,7 +3,7 @@ const Promise       = require('bluebird');
 const Result        = require('../models/result');
 const config        = require('../../config');
 const elasticsearch = require('../../config/elasticsearch')('warn');
-const log = config.log;
+const log           = config.log;
 
 const MAX_LOCAL_HISTORY = 10000;
 
@@ -19,7 +19,7 @@ const History = function (esClient, esIndexSuffix) {
   if (esClient && !esIndexSuffix) {
     throw new Error('esIndexSuffix must be defined');
   } else {
-    INDEX_NAME =`watchdog_${esIndexSuffix}`;
+    INDEX_NAME = `watchdog_${esIndexSuffix}`;
   }
 
   let localHistory = [];
@@ -76,7 +76,7 @@ const History = function (esClient, esIndexSuffix) {
   };
 
   const addEsResult = (result) => {
-    return ensureTemplate().then(()=> {
+    return ensureTemplate().then(() => {
       return esClient.create({
         index: INDEX_NAME,
         type:  'history',
@@ -86,7 +86,7 @@ const History = function (esClient, esIndexSuffix) {
   };
 
   const getEsResults = (query) => {
-    return ensureTemplate().then(()=> {
+    return ensureTemplate().then(() => {
       return esClient.search({
         index:  INDEX_NAME,
         body:   query,
@@ -138,9 +138,9 @@ const WATCHDOG_INDEX_TEMPLATE = {
         total:      {
           type: 'integer'
         },
-        schedule: {
+        schedule:   {
           properties: {
-            name: {
+            name:  {
               type:  'string',
               index: 'not_analyzed'
             },

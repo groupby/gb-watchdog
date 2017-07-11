@@ -14,7 +14,7 @@ const reporter = function (runner, options) {
     tests:      []
   };
 
-  const updateStatus = (status)=> {
+  const updateStatus = (status) => {
     if (_.isFunction(options.reporterOptions.statusCallback)) {
       options.reporterOptions.statusCallback(status);
     }

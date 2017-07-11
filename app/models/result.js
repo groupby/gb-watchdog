@@ -5,53 +5,53 @@ const ISO_86001_REGEX = /(\d{4})-(0[1-9]|1[0-2]|[1-9])-(\3([12]\d|0[1-9]|3[01])|
 
 const SCHEMA = {
   type:       'object',
-  strict: true,
+  strict:     true,
   properties: {
-    start:    {
+    start:      {
       type:    'string',
       pattern: ISO_86001_REGEX,
       error:   'must be an ISO 86001 date'
     },
-    end:      {
+    end:        {
       type:    'string',
       pattern: ISO_86001_REGEX,
       error:   'must be an ISO 86001 date'
     },
-    duration: {
+    duration:   {
       type: 'integer',
       gte:  0
     },
-    passes:   {
+    passes:     {
       type: 'integer',
       gte:  0
     },
-    fails:    {
+    fails:      {
       type: 'integer',
       gte:  0
     },
-    incomplete:    {
+    incomplete: {
       type: 'integer',
       gte:  0
     },
-    total:    {
+    total:      {
       type: 'integer',
       gte:  0
     },
-    schedule: {
-      type: 'object',
+    schedule:   {
+      type:       'object',
       properties: {
-        name: {
+        name:  {
           type: 'string'
         },
         files: {
-          type: 'array',
+          type:  'array',
           items: {
             type: 'string'
           }
         }
       }
     },
-    tests:    {
+    tests:      {
       type:  'array',
       items: {
         type:       'object',

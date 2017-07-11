@@ -12,7 +12,7 @@ const log = require('./index').log;
 
 module.exports = function (logLevel) {
   const self = this;
-  logLevel = logLevel || 'warn';
+  logLevel   = logLevel || 'warn';
 
   let templatesFound = {};
   let aliasesFound   = {};
@@ -28,11 +28,11 @@ module.exports = function (logLevel) {
   self.esLogger = esLogger;
 
   const LogToBunyan = function () {
-    this.error = esLogger.error.bind(esLogger);
+    this.error   = esLogger.error.bind(esLogger);
     this.warning = esLogger.warn.bind(esLogger);
-    this.info = esLogger.info.bind(esLogger);
-    this.debug = esLogger.debug.bind(esLogger);
-    this.trace = (method, requestUrl, body, responseBody, responseStatus) => {
+    this.info    = esLogger.info.bind(esLogger);
+    this.debug   = esLogger.debug.bind(esLogger);
+    this.trace   = (method, requestUrl, body, responseBody, responseStatus) => {
       esLogger.trace({
         method:         method,
         requestUrl:     requestUrl,
@@ -41,7 +41,8 @@ module.exports = function (logLevel) {
         responseStatus: responseStatus
       });
     };
-    this.close = () => {};
+    this.close   = () => {
+    };
   };
 
   /**
@@ -49,8 +50,8 @@ module.exports = function (logLevel) {
    */
   self.clearFoundCache = () => {
     templatesFound = {};
-    aliasesFound = {};
-    indicesFound = {};
+    aliasesFound   = {};
+    indicesFound   = {};
   };
 
   /**
@@ -78,7 +79,7 @@ module.exports = function (logLevel) {
 
         const promise = new Promise((res, rej) => {
           resolve = res;
-          reject = rej;
+          reject  = rej;
         });
         return {
           resolve: resolve,

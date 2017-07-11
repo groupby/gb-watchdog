@@ -8,8 +8,8 @@ const Result = require('../../../app/models/result');
 
 chai.use(chaiAsPromised);
 
-describe('result model', ()=> {
-  it('should accept valid input', ()=> {
+describe('result model', () => {
+  it('should accept valid input', () => {
     const params = {
       start:        moment().toISOString(),
       end:          moment().add(1, 'hour').toISOString(),
@@ -18,7 +18,7 @@ describe('result model', ()=> {
       fails:        2,
       incomplete:   0,
       total:        3,
-      schedule:   {
+      schedule:     {
         name:  'default',
         files: ['sometest.js']
       },
@@ -41,7 +41,7 @@ describe('result model', ()=> {
     expect(result.ignoredParam).to.be.undefined;
   });
 
-  it('should reject invalid input', ()=> {
+  it('should reject invalid input', () => {
     const params = {
       start:      moment().toISOString(),
       end:        moment().add(1, 'hour').toISOString(),
@@ -62,42 +62,42 @@ describe('result model', ()=> {
       ]
     };
 
-    let throws = ()=> {
+    let throws = () => {
       const badParams = _.cloneDeep(params);
       badParams.start = 'not an ISO string';
       new Result(badParams);
     };
     expect(throws).to.throw(/must be an ISO 86001 date/);
 
-    throws = ()=> {
+    throws = () => {
       const badParams = _.cloneDeep(params);
       badParams.end   = 'not an ISO string';
       new Result(badParams);
     };
     expect(throws).to.throw(/must be an ISO 86001 date/);
 
-    throws = ()=> {
+    throws = () => {
       const badParams    = _.cloneDeep(params);
       badParams.duration = 'not an int';
       new Result(badParams);
     };
     expect(throws).to.throw(/must be integer/);
 
-    throws = ()=> {
+    throws = () => {
       const badParams    = _.cloneDeep(params);
       badParams.duration = -1;
       new Result(badParams);
     };
     expect(throws).to.throw(/must be greater than or equal to 0/);
 
-    throws = ()=> {
+    throws = () => {
       const badParams  = _.cloneDeep(params);
       badParams.passes = 'not an int';
       new Result(badParams);
     };
     expect(throws).to.throw(/must be integer/);
 
-    throws = ()=> {
+    throws = () => {
       const badParams  = _.cloneDeep(params);
       badParams.passes = -1;
       new Result(badParams);

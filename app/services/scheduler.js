@@ -132,7 +132,7 @@ const Scheduler = function (testRunner) {
     } else {
       const error = 'Cannot start, scheduler is already running';
       log.error(error);
-      if (_.isFunction(testRunner.logSlackError)){
+      if (_.isFunction(testRunner.logSlackError)) {
         testRunner.logSlackError(error);
       }
       throw new Error('Scheduler is already running');

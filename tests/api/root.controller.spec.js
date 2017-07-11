@@ -47,14 +47,14 @@ describe('root api', () => {
 
     // Need a timeout to let the scheduler run once
     return Promise.delay(1100).then(() =>
-      request(watchdog).get('/status')
-      .set('Content-Type', 'application/json')
-      .expect(200)
-      .then((res) => {
-        expect(res.body.testRunner.default.total).to.eql(3);
-        expect(res.body.scheduler.state).to.eql('running');
-        expect(moment(res.body.scheduler.schedules.default.prevRun).valueOf()).to.be.below(moment().valueOf());
-      })
+        request(watchdog).get('/status')
+        .set('Content-Type', 'application/json')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.testRunner.default.total).to.eql(3);
+          expect(res.body.scheduler.state).to.eql('running');
+          expect(moment(res.body.scheduler.schedules.default.prevRun).valueOf()).to.be.below(moment().valueOf());
+        })
     );
   });
 });
