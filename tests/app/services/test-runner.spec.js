@@ -158,6 +158,30 @@ describe('test-runner service', () => {
     testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
   });
 
+  it('should report details to detail channel', (done) => {
+    const reporter = require('../../../app/services/reporter');
+    const slack    = {
+      send: (message) => {
+        if (message.text.match(/Reference/) && message.text.match(/Details/)) {
+          expect(message.text).to.match(/Details:    Test failed due to: being a bad test/);
+          expect(message.channel).to.eql('detailsChannel');
+          done();
+        }
+      }
+    };
+
+    const testRunner = new TestRunner({
+      reporter, slack, slackConfig: {
+        username:       'user',
+        channel:        'channel',
+        detailsChannel: 'detailsChannel',
+        verbose:        false
+      }
+    });
+
+    testRunner.run('default', ['tests/fakeE2ETests/detailsTest.js']);
+  });
+
   it('should report status at end via sysdig', (done) => {
     let passes  = 0;
     let fails   = 0;
@@ -458,13 +482,12 @@ describe('test-runner service', () => {
         duration: 10,
         end:      moment().toISOString(),
         fails:    10,
-        tests:    [{name: 'noop test 1'}, {name: 'noop test 2', error: 'some error'}, {name: 'noop test 3', 'error': 'some error'},],
+        tests:    [{name: 'noop test 1'}, {name: 'noop test 2', error: 'some error'}, {name: 'noop test 3', 'error': 'some error'}],
         schedule: {
           name:  'default',
           files: ['tests/fakeE2ETests/noopTest.js']
         }
       });
-
     };
 
     const reporter = function (mochaRunner, mochaOptions) {

@@ -28,7 +28,7 @@ describe('root api', () => {
       expect(res.body.testRunner).to.eql({});
       expect(res.body.scheduler.state).to.eql('stopped');
       expect(res.body.scheduler.schedules).to.eql({});
-    });
+    })
   });
 
   it('should return status of scheduled services', () => {
