@@ -31,13 +31,13 @@ const Sysdig = function (sysdigApiToken) {
     };
 
     return rp(options)
-      .then(() => {
-        log.debug(`200 received from sysdig`);
-      })
-      .catch((error) => {
-        log.error(`error posting to sysdig: ${error}`);
-        return Promise.reject(error);
-      });
+    .then(() => {
+      log.debug(`200 received from sysdig`);
+    })
+    .catch((error) => {
+      log.error(`error posting to sysdig: ${error}`);
+      return Promise.reject(error);
+    });
 
   };
 

@@ -7,56 +7,56 @@ const eslint    = require('gulp-eslint');
 const istanbul  = require('gulp-istanbul');
 const coveralls = require('gulp-coveralls');
 
-gulp.task('test:dirty', ()=> {
+gulp.task('test:dirty', () => {
   return gulp.src('tests/**/*.spec.js')
-    .pipe(mocha({reporter: 'spec'}));
+  .pipe(mocha({reporter: 'spec'}));
 });
 
-gulp.task('pre-test', ()=> {
+gulp.task('pre-test', () => {
   return gulp.src('app/**/*.js')
-    .pipe(istanbul())
-    .pipe(istanbul.hookRequire());
+  .pipe(istanbul())
+  .pipe(istanbul.hookRequire());
 });
 
-gulp.task('test:coverage', ['pre-test'], ()=> {
+gulp.task('test:coverage', ['pre-test'], () => {
   return gulp.src(['tests/**/*.spec.js'])
-    .pipe(mocha({reporter: 'spec'}))
-    .pipe(istanbul.writeReports({
-      reporters: [
-        'text',
-        'html',
-        'lcov'
-      ]
-    }))
-    .pipe(istanbul.enforceThresholds({thresholds: {global: 80}}))
-    .once('error', () => {
-      console.error('coverage failed');
-      process.exit(1);
-    });
+  .pipe(mocha({reporter: 'spec'}))
+  .pipe(istanbul.writeReports({
+    reporters: [
+      'text',
+      'html',
+      'lcov'
+    ]
+  }))
+  .pipe(istanbul.enforceThresholds({thresholds: {global: 80}}))
+  .once('error', () => {
+    console.error('coverage failed');
+    process.exit(1);
+  });
 });
 
-const lint = ()=> {
+const lint = () => {
   return gulp.src([
     '**/*.js',
     '!node_modules/**',
     '!coverage/**'
   ])
-    .pipe(eslint({
-      fix: true
-    }))
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError())
-    .once('error', () => {
-      console.error('lint failed');
-      process.exit(1);
-    });
+  .pipe(eslint({
+    fix: true
+  }))
+  .pipe(eslint.format())
+  .pipe(eslint.failAfterError())
+  .once('error', () => {
+    console.error('lint failed');
+    process.exit(1);
+  });
 };
 
-gulp.task('test:lint', ['test:coverage'], ()=> {
+gulp.task('test:lint', ['test:coverage'], () => {
   return lint();
 });
 
-gulp.task('lint', ()=> {
+gulp.task('lint', () => {
   return lint();
 });
 
@@ -71,12 +71,12 @@ gulp.task('coveralls', ['test:lint'], () => {
   }
 
   return gulp.src(path.join(__dirname, 'coverage/lcov.info'))
-    .pipe(coveralls())
-    .once('error', () => {
-      console.error('coveralls failed');
-      process.exit(1);
-    })
-    .once('end', () => {
-      process.exit();
-    });
+  .pipe(coveralls())
+  .once('error', () => {
+    console.error('coveralls failed');
+    process.exit(1);
+  })
+  .once('end', () => {
+    process.exit();
+  });
 });

@@ -17,15 +17,15 @@ const SCHEMA = {
         },
         alert:  {
           properties: {
-            namespace:   {
+            namespace: {
               type:      'string',
               minLength: 1
             },
-            severity:    {
+            severity:  {
               type:      'string',
               minLength: 1
             },
-            tags:        {
+            tags:      {
               optional:   true,
               properties: {
                 '*': {
@@ -93,9 +93,9 @@ const SCHEMA = {
           type:      'string',
           minLength: 1
         },
-        verbose: {
+        verbose:  {
           type: 'boolean',
-          def: true
+          def:  true
         }
       }
     },

@@ -1,8 +1,8 @@
 /*eslint no-magic-numbers: "off" */
 // const chai           = require('chai');
-const nock           = require('nock');
-const httpStatus     = require('http-status');
-const Sysdig         = require('../../../app/services/sysdig');
+const nock       = require('nock');
+const httpStatus = require('http-status');
+const Sysdig     = require('../../../app/services/sysdig');
 
 describe('sysdig service', () => {
 
@@ -32,8 +32,8 @@ describe('sysdig service', () => {
         'Authorization': `Bearer token`
       }
     })
-      .post(Sysdig.PATH, JSON.stringify(body))
-      .reply(httpStatus.OK);
+    .post(Sysdig.PATH, JSON.stringify(body))
+    .reply(httpStatus.OK);
 
     return sysdig.sendEvent(name, description, severity, namespace, tags);
   });
@@ -64,10 +64,10 @@ describe('sysdig service', () => {
         'Authorization': `Bearer token`
       }
     })
-      .post(Sysdig.PATH, JSON.stringify(body))
-      .reply(httpStatus.BAD_GATEWAY);
+    .post(Sysdig.PATH, JSON.stringify(body))
+    .reply(httpStatus.BAD_GATEWAY);
 
     sysdig.sendEvent(name, description, severity, namespace, tags)
-      .catch(() => done());
+    .catch(() => done());
   });
 });

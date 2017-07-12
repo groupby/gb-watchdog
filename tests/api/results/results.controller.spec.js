@@ -8,17 +8,17 @@ const Watchdog       = require('../../../index');
 
 chai.use(chaiAsPromised);
 
-describe('results api', ()=> {
+describe('results api', () => {
   it('should get no results for empty system', (done) => {
     const watchdog = new Watchdog({logLevel: 'debug'});
 
     request(watchdog).get('/results')
-      .set('Content-Type', 'application/json')
-      .expect(200)
-      .then((res)=> {
-        expect(res.body).to.eql([]);
-        done();
-      }).catch(done);
+    .set('Content-Type', 'application/json')
+    .expect(200)
+    .then((res) => {
+      expect(res.body).to.eql([]);
+      done();
+    }).catch(done);
   });
 
   it('should get results', (done) => {
@@ -44,15 +44,15 @@ describe('results api', ()=> {
       ]
     };
 
-    watchdog.services.history.addResult(params).then(()=> {
+    watchdog.services.history.addResult(params).then(() => {
       request(watchdog).get('/results')
-        .set('Content-Type', 'application/json')
-        .expect(200)
-        .then((res)=> {
-          expect(res.body.length).to.eql(1);
-          expect(res.body[0]).to.eql(params);
-          done();
-        }).catch(done);
+      .set('Content-Type', 'application/json')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.length).to.eql(1);
+        expect(res.body[0]).to.eql(params);
+        done();
+      }).catch(done);
     });
   });
 });

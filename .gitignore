@@ -1,2 +1,6 @@
 coverage
 node_modules
+
+# idea files
+.idea/*
+*.iml

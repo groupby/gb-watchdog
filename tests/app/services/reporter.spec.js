@@ -7,8 +7,7 @@ const Reporter = require('../../../app/services/reporter');
 
 chai.use(chaiAsPromised);
 
-describe('reporter service', ()=> {
-
+describe('reporter service', () => {
 
   it('should update status via callback', (done) => {
     const eventCallbacks = {};
@@ -20,14 +19,14 @@ describe('reporter service', ()=> {
     };
 
     let statusSent       = null;
-    const statusCallback = (status)=> {
+    const statusCallback = (status) => {
       statusSent = status;
     };
 
     const options = {
       reporterOptions: {
         statusCallback: statusCallback,
-        schedule:   {
+        schedule:       {
           name:  'default',
           files: ['sometest.js']
         }
@@ -37,8 +36,8 @@ describe('reporter service', ()=> {
     new Reporter(mockRunner, options);
 
     let curTestTitle = 'test title';
-    const testInfo     = {
-      fullTitle: ()=> {
+    const testInfo   = {
+      fullTitle: () => {
         return curTestTitle;
       },
       duration:  10
@@ -117,7 +116,7 @@ describe('reporter service', ()=> {
       stack:    testInfo.stack
     });
 
-    setTimeout(()=> {
+    setTimeout(() => {
       eventCallbacks['end']();
       expect(statusSent.total).to.eql(10);
       expect(statusSent.passes).to.eql(3);

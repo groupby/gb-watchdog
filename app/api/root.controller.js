@@ -1,6 +1,6 @@
 /*eslint no-magic-numbers: "off" */
 
-module.exports = function(services) {
+module.exports = function (services) {
   const self = this;
 
   self.getStatus = (req, res) => {

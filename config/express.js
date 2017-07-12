@@ -26,7 +26,7 @@ module.exports = function (app, config) {
   app.use(cookieParser());
   app.use(cors());
   app.use(expressLogger({
-    name:    `${config.FRAMEWORK_NAME}-express`,
+    name:     `${config.FRAMEWORK_NAME}-express`,
     format:   ":status-code - :method :url - response-time: :response-time",
     streams:  [
       {
@@ -35,7 +35,7 @@ module.exports = function (app, config) {
       }
     ],
     excludes: ['*'],
-    levelFn:  (status, err, meta)=> {
+    levelFn:  (status, err, meta) => {
       if (meta["response-time"] > 30000) {
         return "fatal";
       } else if (meta["status-code"] >= 500) {

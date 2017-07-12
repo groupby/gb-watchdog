@@ -3,10 +3,10 @@ const express = require('express');
 const router  = express.Router();
 const cors    = require('cors');
 
-const api    = require('./api');
+const api = require('./api');
 
 module.exports = (app, config) => {
-  const log    = config.log;
+  const log = config.log;
 
   if (!app || !app.services) {
     throw new Error('app.services must be defined');

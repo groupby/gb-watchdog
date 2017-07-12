@@ -1,17 +1,17 @@
 /*eslint no-magic-numbers: "off" */
-const utils    = require('../../../utils');
+const utils = require('../../../utils');
 
-module.exports = function(services) {
+module.exports = function (services) {
   const self = this;
 
-  self.getResults = (req, res)=> {
+  self.getResults = (req, res) => {
     services.history.getResults(req.body)
-      .then((results) => {
-        res.status(200).json(results);
-      })
-      .catch((error) => {
-        utils.processError(error, res);
-      });
+    .then((results) => {
+      res.status(200).json(results);
+    })
+    .catch((error) => {
+      utils.processError(error, res);
+    });
   };
 
   return self;
