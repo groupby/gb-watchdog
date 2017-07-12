@@ -13,6 +13,8 @@ const randomString = (length, chars) => {
   return result;
 };
 
+const detailIndicator = /test failed due to:/i;
+
 const TestRunner = function (services) {
   const self        = this;
   const mochaRunner = {};
@@ -83,7 +85,7 @@ const TestRunner = function (services) {
             const reference = randomString(5, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
             text += `\tname:    ${test.name}  reference: ${reference}\n`;
 
-            if (_.isString(test.error) && test.error.match(/test failed due to:/i)) {
+            if (_.isString(test.error) && test.error.match(detailIndicator)) {
               detailsText += `Reference: ${reference}\n\tDetails:    ${test.error}\n`;
             }
           });
@@ -96,7 +98,7 @@ const TestRunner = function (services) {
           username: services.slackConfig.username
         });
 
-        if (detailsText.match(/test failed due to:/i) && services.slackConfig.detailsChannel) {
+        if (detailsText.match(detailIndicator) && services.slackConfig.detailsChannel) {
           services.slack.send({
             text:     detailsText,
             channel:  services.slackConfig.detailsChannel,
