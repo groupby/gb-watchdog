@@ -11,7 +11,7 @@ log.level('debug');
 const TestRunner = require('../../../app/services/test-runner');
 
 describe('test-runner service', () => {
-  it('should run tests', (done) => {
+  it.only('should run tests', (done) => {
     let passes    = 0;
     let fails     = 0;
     let end       = 0;
@@ -40,6 +40,7 @@ describe('test-runner service', () => {
     };
 
     const reporter = function (mochaRunner, mochaOptions) {
+      console.log('reporting');
       options = mochaOptions;
 
       mochaRunner.on('pass', () => {
@@ -91,7 +92,7 @@ describe('test-runner service', () => {
     testRunner.abort('default');
   });
 
-  it('should report status at end via slack', (done) => {
+  it.only('should report status at end via slack', (done) => {
     let passes  = 0;
     let fails   = 0;
     let end     = 0;
@@ -106,7 +107,7 @@ describe('test-runner service', () => {
           expect(end).to.eql(1);
           expect(status['default'].end).to.exist;
           expect(status['default'].schedule.name).to.eql('default');
-          expect(status['default'].schedule.files).to.eql(['tests/fakeE2ETests/noopTest.js']);
+          expect(status['default'].schedule.files).to.eql(['tests/fakeE2ETests/noopTest2.js']);
 
           testRunner.abort('default');
           done();
@@ -123,7 +124,7 @@ describe('test-runner service', () => {
         tests:    [],
         schedule: {
           name:  'default',
-          files: ['tests/fakeE2ETests/noopTest.js']
+          files: ['tests/fakeE2ETests/noopTest2.js']
         }
       });
 
@@ -131,14 +132,17 @@ describe('test-runner service', () => {
 
     const reporter = function (mochaRunner, mochaOptions) {
       options = mochaOptions;
-
+      console.log('here');
       mochaRunner.on('pass', () => {
+        console.log('PASSING---------------------------------------------------');
         passes++;
       });
       mochaRunner.on('fail', () => {
+        console.log('FAILING---------------------------------------------------');
         fails++;
       });
       mochaRunner.on('end', () => {
+        console.log('ENDING---------------------------------------------------');
         end++;
         complete();
       });
@@ -155,7 +159,7 @@ describe('test-runner service', () => {
     });
 
     const status = testRunner.status();
-    testRunner.run('default', ['tests/fakeE2ETests/noopTest.js']);
+    testRunner.run('default', ['tests/fakeE2ETests/noopTest2.js']);
   });
 
   it('should report details to detail channel', (done) => {
