@@ -2,7 +2,7 @@ const _       = require('lodash');
 const config  = require('../../config');
 const log     = config.log;
 const moment  = require('moment');
-const decache = require('decache');
+const freshy = require('freshy');
 require('moment-duration-format');
 
 const MOMENT_FORMAT = 'dddd, MMMM Do YYYY, h:mm:ss a';
@@ -156,8 +156,10 @@ const TestRunner = function (services) {
       log.debug(`Running schedule '${name}' with files: ${files}`);
 
       // Need to clear it out of the module cache because mocha keeps a global variable tracking test state
-      decache('mocha');
-      const Mocha = require('mocha');
+      // decache('mocha');
+      // const Mocha = require('mocha');
+      // const mocha = new Mocha();
+      const Mocha = freshy.reload('mocha');
       const mocha = new Mocha();
       mocha.reporter(services.reporter, {
         schedule:       {

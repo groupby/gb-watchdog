@@ -11,7 +11,7 @@ log.level('debug');
 const TestRunner = require('../../../app/services/test-runner');
 
 describe('test-runner service', () => {
-  it('should run tests', (done) => {
+  it.only('should run tests', (done) => {
     let passes    = 0;
     let fails     = 0;
     let end       = 0;
