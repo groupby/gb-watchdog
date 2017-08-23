@@ -11,13 +11,10 @@ chai.use(chaiAsPromised);
 describe('root api', () => {
   let watchdog = null;
 
-  beforeEach((done) => {
+  beforeEach(() => {
     watchdog = new Watchdog({logLevel: 'debug'});
     watchdog.services.scheduler.deleteAll();
-    watchdog.services.history.clearResults()
-    .then(() => {
-      done();
-    });
+    return watchdog.services.history.clearResults();
   });
 
   it('should return status of services', () => {
@@ -62,16 +59,13 @@ describe('root api', () => {
 describe('protected root api', () => {
   let watchdog = null;
 
-  beforeEach((done) => {
+  beforeEach(() => {
     watchdog = new Watchdog({
       logLevel: 'debug',
       apiKey:   'somereallygoodapikey'
     });
     watchdog.services.scheduler.deleteAll();
-    watchdog.services.history.clearResults()
-    .then(() => {
-      done();
-    });
+    return watchdog.services.history.clearResults();
   });
 
   it('should return status of services when providing api key', () => {

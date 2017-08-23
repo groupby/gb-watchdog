@@ -2,7 +2,7 @@ const _       = require('lodash');
 const config  = require('../../config');
 const log     = config.log;
 const moment  = require('moment');
-const decache = require('decache');
+const freshy = require('freshy');
 require('moment-duration-format');
 
 const MOMENT_FORMAT = 'dddd, MMMM Do YYYY, h:mm:ss a';
@@ -151,14 +151,23 @@ const TestRunner = function (services) {
     }
   };
 
+  const clearMochaCache = () => {
+    Object.keys(require.cache).forEach(function (key) {
+      if(key.includes('gb-watchdog/tests/fakeE2ETests/')) {
+        delete require.cache[key];
+      }
+    });
+  };
+
   self.run = (name, files) => {
     if (!mochaRunner[name]) {
       log.debug(`Running schedule '${name}' with files: ${files}`);
 
       // Need to clear it out of the module cache because mocha keeps a global variable tracking test state
-      decache('mocha');
-      const Mocha = require('mocha');
+      const Mocha = freshy.reload('mocha');
       const mocha = new Mocha();
+      clearMochaCache();
+
       mocha.reporter(services.reporter, {
         schedule:       {
           name:  name,

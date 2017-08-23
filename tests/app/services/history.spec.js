@@ -23,7 +23,7 @@ describe('history service', () => {
     return client.indices.delete({
       index:  INDEX,
       ignore: 404
-    })
+    });
   });
 
   afterEach(() => {
@@ -168,7 +168,12 @@ describe('history service', () => {
       ]
     };
 
-    return history.addResult(result).then(() => {
+    return client.indices.create({
+      index: INDEX
+    }).then(() =>
+      history.addResult(result)
+    )
+    .then(() => {
       return client.indices.refresh();
     }).then(() => {
       return history.getResults().then((results) => {
@@ -209,7 +214,11 @@ describe('history service', () => {
       ]
     };
 
-    return history.addResult(result).then(() => {
+    return client.indices.create({
+      index: INDEX
+    }).then(() =>
+      history.addResult(result)
+    ).then(() => {
       return client.indices.refresh();
     }).then(() => {
       return history.getResults().then((results) => {

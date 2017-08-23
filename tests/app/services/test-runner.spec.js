@@ -131,7 +131,6 @@ describe('test-runner service', () => {
 
     const reporter = function (mochaRunner, mochaOptions) {
       options = mochaOptions;
-
       mochaRunner.on('pass', () => {
         passes++;
       });
