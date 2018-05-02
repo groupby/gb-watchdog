@@ -80,10 +80,21 @@ const TestRunner = function (services) {
 
         } else {
           const failedTests = _.filter(result.tests, (test) => _.has(test, 'error'));
-          text += 'Some test failures:\n';
+          text += 'Some test failures:\n\n';
           failedTests.forEach((test) => {
             const reference = randomString(5, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-            text += `\tname:    ${test.name}  reference: ${reference}\n`;
+            
+            // Chai prepends any custom assert error message. It ends up looking like this:
+            // 'something bad happened: expect 42 to be 43'
+            // This splits it by colon. If the error didn't come from Chai from our unit tests,
+            // we display just the plain error message. If it did come from Chai, we display the
+            // error as the 'error' and our custom description of why the test failed as 'desc'.
+            const errorPieces = test.error.split(':');
+
+            text += `\tname:  ${test.name}\n`;
+            text += `\terror:  ${errorPieces[1] ? errorPieces[1] : errorPieces[0]}\n`;
+            text += `\tdesc:  ${errorPieces[1] ? errorPieces[0] : 'Error not from assertion, no description available.'}\n`;
+            text += `\treference:  ${reference}\n`;
 
             if (_.isString(test.error) && test.error.match(detailIndicator)) {
               detailsText += `Reference: ${reference}\n\tDetails:    ${test.error}\n`;
