@@ -1,5 +1,5 @@
 {
-  "name": "gb-watchdog",
+  "name": "@groupby/gb-watchdog",
   "version": "2.3.4",
   "description": "Continuous integration testing framework. Report to slack and elasticsearch.",
   "main": "index.js",
