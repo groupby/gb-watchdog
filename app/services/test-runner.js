@@ -80,7 +80,7 @@ const TestRunner = function (services) {
 
         } else {
           const failedTests = _.filter(result.tests, (test) => _.has(test, 'error'));
-          text += 'Some test failures:\n\n';
+          text += 'Some test failures:\n';
           failedTests.forEach((test) => {
             const reference = randomString(5, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
             
@@ -91,7 +91,7 @@ const TestRunner = function (services) {
             // error as the 'error' and our custom description of why the test failed as 'desc'.
             const errorPieces = test.error.split(':');
 
-            text += `\tname:  ${test.name}\n`;
+            text += `\n\tname:  ${test.name}\n`;
             text += `\terror:  ${errorPieces[1] ? errorPieces[1] : errorPieces[0]}\n`;
             text += `\tdesc:  ${errorPieces[1] ? errorPieces[0] : 'Error not from assertion, no description available.'}\n`;
             text += `\treference:  ${reference}\n`;
