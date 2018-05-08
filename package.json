@@ -55,7 +55,7 @@
     "errorhandler": "^1.4.3",
     "express": "^4.13.4",
     "express-bunyan-logger": "^1.2.0",
-    "freshy": "https://github.com/groupby/freshy",
+    "freshy": "1.0.4",
     "http-status": "^1.0.1",
     "later": "^1.2.0",
     "lodash": "^4.12.0",
